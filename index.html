@@ -7,7 +7,6 @@
   <meta name="description" content="Shop the latest fashion, electronics, beauty essentials, home accessories and more at Saim Store (SS). Direct WhatsApp Ordering & Cash on Delivery across Pakistan." />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
@@ -474,17 +473,6 @@
 
   <!-- COMPLETE APPLICATION LOGIC, 144 SEEDED PRODUCTS, SLIDER ENGINE & WHATSAPP CHECKOUT -->
   <script>
-    // SUPABASE INITIALIZATION
-    const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
-    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_PUBLISHABLE_ANON_KEY';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    async function handleAdminLogout() {
-      await supabase.auth.signOut();
-      showToast('Logged out successfully.');
-      navigate('home');
-    }
-
     /********************************************************************
      * 1. CENTRALIZED WHATSAPP CONFIGURATION & HELPER FUNCTIONS
      ********************************************************************/
@@ -946,7 +934,7 @@
           const subSlug = slugify(subName);
           const tpl = dept.sampleTemplates[i % dept.sampleTemplates.length];
           const isProEdition = i >= 8;
-          const name = isProEdition ? `${tpl.title} —${i % 2 === 0 ? 'Signature Edition' : 'Pro Pack'}` : tpl.title;
+          const name = isProEdition ? `${tpl.title} — ${i % 2 === 0 ? 'Signature Edition' : 'Pro Pack'}` : tpl.title;
           const price = isProEdition ? Math.round(tpl.price * 1.15 / 50) * 50 : tpl.price;
           const oldPrice = isProEdition ? Math.round(tpl.oldPrice * 1.15 / 50) * 50 : tpl.oldPrice;
           const discountPercent = Math.round(((oldPrice - price) / oldPrice) * 100);
@@ -980,8 +968,8 @@
               dept.sampleTemplates[(i + 1) % dept.sampleTemplates.length].img,
               dept.sampleTemplates[(i + 2) % dept.sampleTemplates.length].img
             ],
-            shortDescription: `Authentic ${tpl.brand}${subName.toLowerCase()} backed by Saim Store quality guarantee & nationwide delivery.`,
-            fullDescription: `Experience premium craftsmanship with the ${name} by${tpl.brand}. Curated for the Saim Store ${dept.name} department, this item combines modern design, reliable durability, and fast Cash on Delivery across Pakistan. Select your preferred option and quantity below to add to cart or order directly via WhatsApp.`,
+            shortDescription: `Authentic ${tpl.brand} ${subName.toLowerCase()} backed by Saim Store quality guarantee & nationwide delivery.`,
+            fullDescription: `Experience premium craftsmanship with the ${name} by ${tpl.brand}. Curated for the Saim Store ${dept.name} department, this item combines modern design, reliable durability, and fast Cash on Delivery across Pakistan. Select your preferred option and quantity below to add to cart or order directly via WhatsApp.`,
             options: {
               colors: ['Obsidian Black', 'Pearl White', 'Signature Orange'],
               sizes: dept.slug === 'fashion-clothing' ? ['S', 'M', 'L', 'XL'] : ['Standard', 'Pro Bundle']
@@ -1544,7 +1532,8 @@
 
             <div class="space-y-2.5 pt-2 border-t border-gray-100">
               <div class="flex items-baseline gap-2">
-                <span class="font-display font-extrabold text-sm sm:text-base text-brand-black">${formatRs(product.price)}</span>${product.oldPrice > product.price ? `
+                <span class="font-display font-extrabold text-sm sm:text-base text-brand-black">${formatRs(product.price)}</span>
+                ${product.oldPrice > product.price ? `
                   <span class="text-[11px] text-gray-400 line-through">${formatRs(product.oldPrice)}</span>
                 ` : ''}
               </div>
@@ -1745,3 +1734,1884 @@
               <div class="flex items-center gap-3">
                 <div id="live-deal-countdown" class="flex items-center gap-2">
                   <div class="bg-white/10 border border-white/15 px-3.5 py-2 rounded-2xl text-center min-w-[60px]">
+                    <span id="cd-hours" class="font-display font-extrabold text-xl text-brand-orange block">19</span>
+                    <span class="text-[10px] uppercase tracking-wider text-gray-300">Hours</span>
+                  </div>
+                  <div class="bg-white/10 border border-white/15 px-3.5 py-2 rounded-2xl text-center min-w-[60px]">
+                    <span id="cd-mins" class="font-display font-extrabold text-xl text-brand-orange block">41</span>
+                    <span class="text-[10px] uppercase tracking-wider text-gray-300">Mins</span>
+                  </div>
+                  <div class="bg-white/10 border border-white/15 px-3.5 py-2 rounded-2xl text-center min-w-[60px]">
+                    <span id="cd-secs" class="font-display font-extrabold text-xl text-brand-orange block">28</span>
+                    <span class="text-[10px] uppercase tracking-wider text-gray-300">Secs</span>
+                  </div>
+                </div>
+                <button onclick="navigate('deals')" class="px-5 py-3 rounded-full bg-brand-orange hover:bg-brand-orangeHover text-white font-display font-bold text-xs transition shrink-0">
+                  See All Deals
+                </button>
+              </div>
+            </div>
+
+            ${renderNetflixSliderRow({ sliderId: 'slider-todays-deals', products: dealProducts, loopSeconds: 48 })}
+          </div>
+        </section>
+
+        <!-- SECTION 18: BEST SELLERS (MOVING PRODUCT SLIDER) -->
+        <section class="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-2">
+            <div>
+              <span class="text-xs font-extrabold uppercase tracking-widest text-brand-orange">Most Popular Across Pakistan</span>
+              <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-brand-black mt-0.5">Best Sellers</h2>
+            </div>
+            <button onclick="navigate('best-sellers')" class="text-xs sm:text-sm font-bold text-brand-orange hover:underline flex items-center gap-1">
+              <span>View All Best Sellers</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+          ${renderNetflixSliderRow({ sliderId: 'slider-best-sellers', products: bestSellerProducts, loopSeconds: 46 })}
+        </section>
+
+        <!-- SECTION 19: WHY SHOP WITH SAIM STORE? (4 TRUST CARDS) -->
+        <section class="py-12 bg-brand-grayLight border-t border-gray-200">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-8">
+              <span class="text-xs font-extrabold uppercase tracking-widest text-brand-orange">Customer First Guarantee</span>
+              <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-brand-black mt-1">Why Shop with Saim Store?</h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-xs space-y-2">
+                <div class="w-12 h-12 rounded-2xl bg-orange-100 text-brand-orange flex items-center justify-center">
+                  <i data-lucide="badge-check" class="w-6 h-6"></i>
+                </div>
+                <h3 class="font-display font-bold text-base">Quality Products</h3>
+                <p class="text-xs text-brand-grayMuted leading-relaxed">Every item across our 12 departments is inspected for quality, authenticity, and durability before dispatch.</p>
+              </div>
+              <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-xs space-y-2">
+                <div class="w-12 h-12 rounded-2xl bg-orange-100 text-brand-orange flex items-center justify-center">
+                  <i data-lucide="message-circle" class="w-6 h-6"></i>
+                </div>
+                <h3 class="font-display font-bold text-base">Convenient Ordering</h3>
+                <p class="text-xs text-brand-grayMuted leading-relaxed">Select variants and quantities effortlessly and submit your complete prefilled order via WhatsApp in one tap.</p>
+              </div>
+              <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-xs space-y-2">
+                <div class="w-12 h-12 rounded-2xl bg-orange-100 text-brand-orange flex items-center justify-center">
+                  <i data-lucide="headphones" class="w-6 h-6"></i>
+                </div>
+                <h3 class="font-display font-bold text-base">Customer Support</h3>
+                <p class="text-xs text-brand-grayMuted leading-relaxed">Direct human support on WhatsApp (03396497058) for product inquiries, sizing help, and delivery updates.</p>
+              </div>
+              <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-xs space-y-2">
+                <div class="w-12 h-12 rounded-2xl bg-orange-100 text-brand-orange flex items-center justify-center">
+                  <i data-lucide="shield-check" class="w-6 h-6"></i>
+                </div>
+                <h3 class="font-display font-bold text-base">Secure Shopping</h3>
+                <p class="text-xs text-brand-grayMuted leading-relaxed">Enjoy risk-free Cash on Delivery (COD) nationwide across Pakistan with 7-day easy replacement protection.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    // Live countdown ticker for Section 17
+    setInterval(() => {
+      const hrsEl = document.getElementById('cd-hours');
+      const minsEl = document.getElementById('cd-mins');
+      const secsEl = document.getElementById('cd-secs');
+      if (!hrsEl || !minsEl || !secsEl) return;
+
+      const end = new Date(state.settings.saleEndsAt).getTime();
+      const diff = Math.max(0, Math.floor((end - Date.now()) / 1000));
+      const h = String(Math.floor(diff / 3600)).padStart(2, '0');
+      const m = String(Math.floor((diff % 3600) / 60)).padStart(2, '0');
+      const s = String(diff % 60).padStart(2, '0');
+      hrsEl.textContent = h;
+      minsEl.textContent = m;
+      secsEl.textContent = s;
+    }, 1000);
+
+    /********************************************************************
+     * 10. PART 6 & PART 12: COMPLETE PRODUCT SELECTION & BUY NOW FLOW
+     ********************************************************************/
+    function sanitizeQty(val, maxStock = 99) {
+      const parsed = parseInt(val, 10);
+      if (isNaN(parsed) || parsed < 1) return 1;
+      return Math.min(parsed, Math.max(1, maxStock));
+    }
+
+    function addToCart(productId, qty = 1, color = null, size = null, silent = false) {
+      const product = state.products.find(p => p.id === productId);
+      if (!product) return false;
+      if (product.stock <= 0) {
+        showToast('Sorry, this product is currently out of stock.', 'error');
+        return false;
+      }
+
+      const cleanQty = sanitizeQty(qty, product.stock);
+      const selectedColor = color || product.options.colors[0];
+      const selectedSize = size || product.options.sizes[0];
+
+      const existing = state.cart.find(
+        item => item.productId === productId && item.color === selectedColor && item.size === selectedSize
+      );
+
+      if (existing) {
+        if (existing.qty + cleanQty > product.stock) {
+          existing.qty = product.stock;
+          showToast(`Updated to maximum available stock (${product.stock} units).`, 'error');
+        } else {
+          existing.qty += cleanQty;
+        }
+      } else {
+        state.cart.push({
+          productId,
+          qty: cleanQty,
+          color: selectedColor,
+          size: selectedSize
+        });
+      }
+
+      saveState();
+      renderCartDrawer();
+      if (!silent) {
+        showToast(`Added ${cleanQty} × "${product.name}" to cart!`);
+      }
+      return true;
+    }
+
+    // PART 12: BUY NOW adds the selected product/variant/quantity and goes straight to the delivery checkout form
+    function buyNowProduct(productId, qty = 1, color = null, size = null) {
+      const added = addToCart(productId, qty, color, size, true);
+      if (added) {
+        closeCartDrawer();
+        navigate('checkout');
+      }
+    }
+
+    function updateCartQty(index, delta) {
+      const item = state.cart[index];
+      if (!item) return;
+      const product = state.products.find(p => p.id === item.productId);
+      const nextQty = item.qty + delta;
+      if (nextQty <= 0) {
+        state.cart.splice(index, 1);
+      } else if (product && nextQty > product.stock) {
+        showToast(`Maximum available stock (${product.stock}) reached.`, 'error');
+        return;
+      } else {
+        item.qty = nextQty;
+      }
+      saveState();
+      renderCartDrawer();
+      if (currentRoute.page === 'cart' || currentRoute.page === 'checkout') {
+        renderCurrentRoute();
+      }
+    }
+
+    function removeFromCart(index) {
+      state.cart.splice(index, 1);
+      saveState();
+      renderCartDrawer();
+      if (currentRoute.page === 'cart' || currentRoute.page === 'checkout') {
+        renderCurrentRoute();
+      }
+    }
+
+    function calculateCartTotals() {
+      let subtotal = 0;
+      const detailedItems = state.cart.map((item, idx) => {
+        const product = state.products.find(p => p.id === item.productId);
+        if (!product) return null;
+        const safeQty = sanitizeQty(item.qty, product.stock);
+        const lineTotal = product.price * safeQty;
+        subtotal += lineTotal;
+        return { ...item, qty: safeQty, index: idx, product, lineTotal };
+      }).filter(Boolean);
+
+      let discount = 0;
+      if (appliedCouponCode) {
+        const coupon = state.coupons.find(c => c.code.toUpperCase() === appliedCouponCode.toUpperCase() && c.active);
+        if (coupon && subtotal >= coupon.minOrder) {
+          discount = coupon.type === 'percentage'
+            ? Math.round((subtotal * coupon.value) / 100)
+            : coupon.value;
+        }
+      }
+
+      const shippingFee = subtotal === 0
+        ? 0
+        : (subtotal - discount >= state.settings.freeShippingThreshold ? 0 : state.settings.shippingFee);
+      const total = Math.max(0, subtotal - discount + shippingFee);
+
+      return { detailedItems, subtotal, discount, shippingFee, total };
+    }
+
+    function renderProductDetailPage(slug) {
+      const product = state.products.find(p => p.slug === slug) || state.products[0];
+
+      if (detailState.productId !== product.id) {
+        detailState = {
+          productId: product.id,
+          color: product.options.colors[0],
+          size: product.options.sizes[0],
+          qty: 1,
+          activeImgIdx: 0
+        };
+      }
+
+      const activeImg = product.gallery[detailState.activeImgIdx] || product.image;
+      const liveUnitTotal = product.price * detailState.qty;
+      const related = state.products
+        .filter(p => p.departmentSlug === product.departmentSlug && p.id !== product.id && p.active)
+        .slice(0, 4);
+
+      return `
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+          <!-- Breadcrumb -->
+          <nav class="flex items-center gap-2 text-xs text-brand-grayMuted mb-6 overflow-x-auto no-scrollbar">
+            <button onclick="navigate('home')" class="hover:text-brand-orange">Home</button>
+            <span>/</span>
+            <button onclick="navigate('category', {slug: '${product.departmentSlug}'})" class="hover:text-brand-orange">${product.departmentName}</button>
+            <span>/</span>
+            <button onclick="navigate('subcategory', {slug: '${product.departmentSlug}', sub: '${product.subcategorySlug}'})" class="hover:text-brand-orange">${product.subcategoryName}</button>
+            <span>/</span>
+            <span class="text-brand-black font-bold truncate">${product.name}</span>
+          </nav>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            <!-- Left: Product Gallery -->
+            <div class="lg:col-span-6 space-y-4">
+              <div class="aspect-square rounded-3xl bg-brand-grayLight overflow-hidden border border-gray-200">
+                <img
+                  src="${activeImg}"
+                  alt="${product.name}"
+                  onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80'"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div class="flex gap-3">
+                ${product.gallery.map((imgUrl, idx) => `
+                  <button
+                    onclick="detailState.activeImgIdx = ${idx}; renderCurrentRoute();"
+                    class="w-20 h-20 rounded-2xl overflow-hidden border-2 transition ${
+                      detailState.activeImgIdx === idx ? 'border-brand-orange' : 'border-transparent opacity-70 hover:opacity-100'
+                    }"
+                  >
+                    <img src="${imgUrl}" alt="Thumbnail" class="w-full h-full object-cover" />
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Right: Product Info, Variant & Dynamic Quantity Total Calculator -->
+            <div class="lg:col-span-6 space-y-5">
+              <div class="flex items-center justify-between">
+                <span class="px-3 py-1 rounded-full bg-orange-100 text-brand-orange text-xs font-extrabold">${product.brand}</span>
+                <span class="text-xs font-medium text-brand-grayMuted">SKU: <strong>${product.sku}</strong></span>
+              </div>
+
+              <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-brand-black">${product.name}</h1>
+
+              <div class="flex flex-wrap items-center gap-4 text-sm">
+                <span class="text-amber-500 font-bold">★ ${product.rating}</span>
+                <span class="text-brand-grayMuted">(${product.reviewCount} verified reviews)</span>
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                  product.stock > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+                }">
+                  ${product.stock > 0 ? `In Stock (${product.stock} available)` : 'Out of Stock'}
+                </span>
+              </div>
+
+              <!-- Unit Price & Dynamic Quantity Total Box (PART 6) -->
+              <div class="p-4 rounded-2xl bg-brand-grayLight border border-gray-200 space-y-2">
+                <div class="flex items-baseline justify-between">
+                  <span class="text-xs font-bold uppercase text-brand-grayMuted">Unit Price:</span>
+                  <div class="flex items-baseline gap-2">
+                    <span class="font-display font-bold text-lg text-brand-black">${formatRs(product.price)}</span>
+                    ${product.oldPrice > product.price ? `
+                      <span class="text-xs text-gray-400 line-through">${formatRs(product.oldPrice)}</span>
+                    ` : ''}
+                  </div>
+                </div>
+                <div class="flex items-baseline justify-between pt-2 border-t border-gray-200">
+                  <span class="text-xs font-extrabold uppercase text-brand-black">Selected Total (${detailState.qty} ${detailState.qty > 1 ? 'units' : 'unit'}):</span>
+                  <span class="font-display font-extrabold text-2xl text-brand-orange">${formatRs(liveUnitTotal)}</span>
+                </div>
+              </div>
+
+              <p class="text-sm text-gray-600 leading-relaxed">${product.fullDescription}</p>
+
+              <!-- Variant Selection -->
+              <div class="space-y-4 pt-2 border-t border-gray-200">
+                <div>
+                  <label class="text-xs font-bold uppercase tracking-wider block mb-2">Select Color: <span class="text-brand-orange">${detailState.color}</span></label>
+                  <div class="flex flex-wrap gap-2">
+                    ${product.options.colors.map(c => `
+                      <button
+                        type="button"
+                        onclick="detailState.color = '${c}'; renderCurrentRoute();"
+                        class="px-3.5 py-2 rounded-xl text-xs font-bold border transition ${
+                          detailState.color === c
+                            ? 'border-brand-orange bg-orange-50 text-brand-orange'
+                            : 'border-gray-200 hover:border-gray-400'
+                        }"
+                      >
+                        ${c}
+                      </button>
+                    `).join('')}
+                  </div>
+                </div>
+
+                <div>
+                  <label class="text-xs font-bold uppercase tracking-wider block mb-2">Select Size / Option: <span class="text-brand-orange">${detailState.size}</span></label>
+                  <div class="flex flex-wrap gap-2">
+                    ${product.options.sizes.map(s => `
+                      <button
+                        type="button"
+                        onclick="detailState.size = '${s}'; renderCurrentRoute();"
+                        class="px-4 py-2 rounded-xl text-xs font-bold border transition ${
+                          detailState.size === s
+                            ? 'border-brand-orange bg-brand-black text-white'
+                            : 'border-gray-200 hover:border-gray-400'
+                        }"
+                      >
+                        ${s}
+                      </button>
+                    `).join('')}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quantity Plus/Minus & Action Buttons -->
+              <div class="space-y-3 pt-3">
+                <div class="flex items-center gap-4">
+                  <span class="text-xs font-bold uppercase tracking-wider">Quantity:</span>
+                  <div class="inline-flex items-center rounded-full border border-gray-300 bg-brand-grayLight px-2 py-1">
+                    <button
+                      type="button"
+                      onclick="detailState.qty = Math.max(1, detailState.qty - 1); renderCurrentRoute();"
+                      class="w-9 h-9 rounded-full font-bold text-base hover:bg-white transition"
+                    >-</button>
+                    <span class="px-5 font-display font-extrabold text-base">${detailState.qty}</span>
+                    <button
+                      type="button"
+                      onclick="detailState.qty = Math.min(${product.stock}, detailState.qty + 1); renderCurrentRoute();"
+                      class="w-9 h-9 rounded-full font-bold text-base hover:bg-white transition"
+                    >+</button>
+                  </div>
+                  <span class="text-xs text-brand-grayMuted">Max stock: ${product.stock}</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                  <button
+                    type="button"
+                    onclick="addToCart('${product.id}', detailState.qty, detailState.color, detailState.size)"
+                    class="py-4 px-6 rounded-full bg-brand-black hover:bg-gray-800 text-white font-display font-bold text-sm transition flex items-center justify-center gap-2"
+                  >
+                    <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                    <span>Add to Cart (${formatRs(liveUnitTotal)})</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onclick="buyNowProduct('${product.id}', detailState.qty, detailState.color, detailState.size)"
+                    class="py-4 px-6 rounded-full bg-brand-orange hover:bg-brand-orangeHover text-white font-display font-bold text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20"
+                  >
+                    <i data-lucide="zap" class="w-4 h-4"></i>
+                    <span>Buy Now (Proceed to Delivery)</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Related Products -->
+          <div class="mt-16 pt-12 border-t border-gray-200">
+            <h2 class="font-display font-extrabold text-2xl mb-6">More from ${product.departmentName}</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+              ${related.map(renderProductCard).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    /********************************************************************
+     * 11. PART 7, 8, 9, 10: REUSABLE WHATSAPP ORDER MESSAGE GENERATOR
+     *     & COMPLETE CHECKOUT FORM WITH VALIDATION
+     ********************************************************************/
+    function isValidPakistaniPhone(phoneStr) {
+      const cleaned = String(phoneStr || '').replace(/[\s\-()]/g, '');
+      return /^(\+92|0092|92|0)?3\d{9}$/.test(cleaned);
+    }
+
+    function generateWhatsAppOrderMessage(order) {
+      const lines = [];
+      lines.push('NEW ORDER — SAIM STORE');
+      lines.push(`Order ID: ${order.id}`);
+      lines.push(`Customer Name: ${order.customerName}`);
+      lines.push(`Mobile: ${order.customerMobile}`);
+      if (order.customerWhatsapp && order.customerWhatsapp.trim() !== '') {
+        lines.push(`WhatsApp: ${order.customerWhatsapp}`);
+      }
+      lines.push('');
+      lines.push('PRODUCT DETAILS');
+
+      order.items.forEach((item, idx) => {
+        lines.push(`Product ${idx + 1}:`);
+        lines.push(`${item.name}`);
+        if (item.variant) {
+          lines.push(`Variant: ${item.variant}`);
+        }
+        lines.push(`Unit Price: ${formatRs(item.unitPrice)}`);
+        lines.push(`Quantity: ${item.qty}`);
+        lines.push(`Total: ${formatRs(item.total)}`);
+        lines.push(`Product Link: ${item.link}`);
+        lines.push('');
+      });
+
+      lines.push('ORDER SUMMARY');
+      lines.push(`Subtotal: ${formatRs(order.subtotal)}`);
+      lines.push(`Discount: ${formatRs(order.discount)}`);
+      lines.push(`Delivery Charges: ${formatRs(order.shippingFee)}`);
+      lines.push(`Grand Total: ${formatRs(order.total)}`);
+      lines.push('');
+
+      lines.push('DELIVERY INFORMATION');
+      lines.push(`Full Name: ${order.customerName}`);
+      lines.push(`Phone: ${order.customerMobile}`);
+      lines.push(`City: ${order.city}`);
+      lines.push(`Province: ${order.province}`);
+      lines.push(`Complete Address: ${order.fullAddressComposed}`);
+      if (order.postalCode && order.postalCode.trim() !== '') {
+        lines.push(`Postal Code: ${order.postalCode}`);
+      }
+      if (order.landmark && order.landmark.trim() !== '') {
+        lines.push(`Landmark: ${order.landmark}`);
+      }
+      lines.push(`Country: ${order.country || 'Pakistan'}`);
+      lines.push('');
+
+      lines.push('PAYMENT METHOD');
+      lines.push(`${order.paymentMethod || 'Cash on Delivery'}`);
+
+      if (order.specialInstructions && order.specialInstructions.trim() !== '') {
+        lines.push('');
+        lines.push('SPECIAL INSTRUCTIONS');
+        lines.push(`${order.specialInstructions.trim()}`);
+      }
+
+      lines.push('');
+      lines.push('Hello Saim Store, I would like to place this order. Please confirm availability and delivery details.');
+
+      return lines.join('\n');
+    }
+
+    function buildWhatsAppOrderUrl(order) {
+      const intl = getStoreWhatsAppIntl();
+      const message = generateWhatsAppOrderMessage(order);
+      return `https://wa.me/${intl}?text=${encodeURIComponent(message)}`;
+    }
+
+    function renderCheckoutPage() {
+      const { detailedItems, subtotal, discount, shippingFee, total } = calculateCartTotals();
+      if (detailedItems.length === 0) {
+        return renderFullCartPage();
+      }
+
+      return `
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+            <div>
+              <span class="text-xs font-extrabold uppercase tracking-widest text-brand-orange">Direct WhatsApp Checkout</span>
+              <h1 class="font-display font-extrabold text-2xl sm:text-3xl mt-1">Complete Your Delivery Details</h1>
+              <p class="text-xs sm:text-sm text-brand-grayMuted mt-0.5">
+                Fill out your shipping details below and click <strong>Place Order via WhatsApp</strong> to send your order request to Saim Store (${getStoreWhatsAppLocal()}).
+              </p>
+            </div>
+            <button onclick="navigate('cart')" class="self-start sm:self-auto px-5 py-2.5 rounded-full border border-gray-300 hover:bg-brand-black hover:text-white text-xs font-bold transition flex items-center gap-1.5">
+              <i data-lucide="arrow-left" class="w-4 h-4"></i>
+              <span>Back to Cart</span>
+            </button>
+          </div>
+
+          <div id="checkout-error-banner" class="hidden mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold"></div>
+
+          <form id="whatsapp-checkout-form" onsubmit="handleWhatsAppCheckoutSubmit(event)" novalidate class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Left Column: Customer Info, Shipping Address, Special Instructions & Payment Method -->
+            <div class="lg:col-span-7 space-y-6">
+
+              <!-- Customer Information -->
+              <div class="bg-white p-6 rounded-3xl border border-gray-200 shadow-2xs space-y-4">
+                <h2 class="font-display font-bold text-lg flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-full bg-brand-orange text-white text-xs flex items-center justify-center">1</span>
+                  <span>Customer Information</span>
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="text-xs font-bold block mb-1">Full Name <span class="text-red-500">*</span></label>
+                    <input name="fullName" required placeholder="e.g. Muhammad Saim" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-brand-orange outline-none text-sm" />
+                  </div>
+                  <div>
+                    <label class="text-xs font-bold block mb-1">Mobile Number (Pakistan) <span class="text-red-500">*</span></label>
+                    <input name="mobile" required placeholder="03001234567 or +923001234567" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-brand-orange outline-none text-sm" />
+                  </div>
+                  <div>
+                    <label class="text-xs font-bold block mb-1">WhatsApp Number (Optional if same)</label>
+                    <input name="whatsapp" placeholder="03396497058" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-brand-orange outline-none text-sm" />
+                  </div>
+                  <div>
+                    <label class="text-xs font-bold block mb-1">Email Address (Optional)</label>
+                    <input name="email" type="email" placeholder="you@example.com" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-brand-orange outline-none text-sm" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Shipping Address -->
+              <div class="bg-white p-6 rounded-3xl border border-gray-200 shadow-2xs space-y-4">
+                <h2 class="font-display font-bold text-lg flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-full bg-brand-orange text-white text-xs flex items-center justify-center">2</span>
+                  <span>Shipping Address</span>
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="text-xs font-bold block mb-1">Country <span class="text-red-500">*</span></label>
+                    <input name="country" required value="Pakistan" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 bg-brand-grayLight text-sm font-semibold" />
+                  </div>
+                  <div>
+                    <label class="text-xs font-bold block mb-1">Province / State <span class="text-red-500">*</span></label>
+                    <select name="province" required class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-brand-orange outline-none text-sm bg-white">
+                      <option value="">Select Province</option>
+                      <option value="Punjab" selected>Punjab</option>
+                      <option value="Sindh">Sindh</option>
+                      <option value="Khyber Pakhtunkhwa">Khyber Pakhtunkhwa</option>
+                      <option value="Islamabad Capital Territory">Islamabad Capital Territory</option>
+                      <option value="Balochistan">Balochistan</option>
+                      <option value="Gilgit-Baltistan">Gilgit-Baltistan</option>
+                      <option value="Azad Kashmir">Azad Kashmir</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="text-xs font-bold block mb-1">City <span class="text-red-500">*</span></label>
+                    <input name="city" required placeholder="e.g. Lahore, Karachi, Islamabad, Sargodha" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-brand-orange outline-none text-sm" />
+                  </div>
+                  <div>
+                    <label class="text-xs font-bold block mb-1">House / Apartment Number (Optional)</label>
+                    <input name="houseNumber" placeholder="e.g. House #42B" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-brand-orange outline-none text-sm" />
+                  </div>
+                  <div>
+                    <label class="text-xs font-bold block mb-1">Area / Neighborhood (Optional)</label>
+                    <input name="area" placeholder="e.g. Gulberg III / Satellite Town" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-brand-orange outline-none text-sm" />
+                  </div>
+                  <div>
+                    <label class="text-xs font-bold block mb-1">Postal Code (Optional)</label>
+                    <input name="postalCode" placeholder="e.g. 54000" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-brand-orange outline-none text-sm" />
+                  </div>
+                  <div class="sm:col-span-2">
+                    <label class="text-xs font-bold block mb-1">Complete Street Address <span class="text-red-500">*</span></label>
+                    <input name="streetAddress" required placeholder="Street name, block/sector, and complete delivery details" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-brand-orange outline-none text-sm" />
+                  </div>
+                  <div class="sm:col-span-2">
+                    <label class="text-xs font-bold block mb-1">Nearby Landmark (Optional)</label>
+                    <input name="landmark" placeholder="e.g. Near Central Mosque / Main Market" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-brand-orange outline-none text-sm" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Additional Information & Payment Method -->
+              <div class="bg-white p-6 rounded-3xl border border-gray-200 shadow-2xs space-y-4">
+                <h2 class="font-display font-bold text-lg flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-full bg-brand-orange text-white text-xs flex items-center justify-center">3</span>
+                  <span>Payment & Special Instructions</span>
+                </h2>
+
+                <div>
+                  <label class="text-xs font-bold block mb-1">Special Instructions for Your Order (Optional)</label>
+                  <textarea
+                    name="specialInstructions"
+                    rows="2"
+                    placeholder="Please deliver after 5 PM. / Call me before delivery."
+                    class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-brand-orange outline-none text-sm"
+                  ></textarea>
+                </div>
+
+                <div class="space-y-2.5 pt-2">
+                  <label class="text-xs font-bold block">Payment Method</label>
+                  <label class="flex items-start gap-3 p-4 rounded-2xl border-2 border-brand-orange bg-orange-50/40 cursor-pointer">
+                    <input type="radio" name="paymentMethod" value="Cash on Delivery" checked class="mt-1 accent-brand-orange" />
+                    <div>
+                      <p class="font-display font-bold text-sm">Cash on Delivery (Default)</p>
+                      <p class="text-xs text-brand-grayMuted">Pay in PKR cash at your doorstep when your order is delivered.</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Automatic Order Information & WhatsApp Submit Button -->
+            <div class="lg:col-span-5 space-y-4">
+              <div class="bg-brand-grayLight p-6 rounded-3xl border border-gray-200 space-y-4 sticky top-24">
+                <div class="flex items-center justify-between">
+                  <h2 class="font-display font-bold text-lg">Order Information</h2>
+                  <span class="text-xs font-bold bg-white px-2.5 py-1 rounded-full border border-gray-200">${detailedItems.length} Products</span>
+                </div>
+
+                <!-- Selected Products List with Quantity Controls -->
+                <div class="space-y-3 max-h-80 overflow-y-auto pr-1">
+                  ${detailedItems.map(item => `
+                    <div class="flex items-start justify-between gap-3 bg-white p-3 rounded-2xl border border-gray-200/80 text-xs">
+                      <div class="flex items-start gap-3 min-w-0">
+                        <img src="${item.product.image}" alt="${item.product.name}" class="w-14 h-14 rounded-xl object-cover shrink-0 bg-gray-100" />
+                        <div class="min-w-0">
+                          <p class="font-bold text-brand-black truncate">${item.product.name}</p>
+                          <p class="text-[11px] text-brand-grayMuted">Variant: ${item.color} / ${item.size}</p>
+                          <p class="text-[11px] text-gray-500">Unit: ${formatRs(item.product.price)}</p>
+                          <div class="inline-flex items-center gap-2 mt-1.5 bg-brand-grayLight rounded-lg px-2 py-0.5 border border-gray-200">
+                            <button type="button" onclick="updateCartQty(${item.index}, -1)" class="font-bold text-xs hover:text-brand-orange">-</button>
+                            <span class="font-bold text-xs">${item.qty}</span>
+                            <button type="button" onclick="updateCartQty(${item.index}, 1)" class="font-bold text-xs hover:text-brand-orange">+</button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="text-right shrink-0">
+                        <span class="font-display font-extrabold text-xs sm:text-sm text-brand-orange block">${formatRs(item.lineTotal)}</span>
+                        <button type="button" onclick="removeFromCart(${item.index})" class="text-[10px] text-gray-400 hover:text-red-600 mt-2 block ml-auto">Remove</button>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+
+                <!-- Totals Breakdown -->
+                <div class="space-y-2 text-sm pt-3 border-t border-gray-200">
+                  <div class="flex justify-between text-gray-600">
+                    <span>Product Subtotal</span>
+                    <span class="font-bold text-brand-black">${formatRs(subtotal)}</span>
+                  </div>
+                  <div class="flex justify-between text-emerald-600">
+                    <span>Applicable Discount</span>
+                    <span class="font-bold">-${formatRs(discount)}</span>
+                  </div>
+                  <div class="flex justify-between text-gray-600">
+                    <span>Shipping Charges</span>
+                    <span class="font-bold text-brand-black">${shippingFee === 0 ? 'Rs. 0 (FREE)' : formatRs(shippingFee)}</span>
+                  </div>
+                  <div class="flex justify-between text-lg font-display font-extrabold pt-3 border-t border-gray-300">
+                    <span>Grand Total</span>
+                    <span class="text-brand-orange">${formatRs(total)}</span>
+                  </div>
+                </div>
+
+                <!-- Primary & Secondary Checkout Buttons -->
+                <div class="space-y-2.5 pt-2">
+                  <button
+                    type="submit"
+                    class="w-full py-4 px-6 rounded-full bg-[#25D366] hover:bg-[#1ebe5b] text-white font-display font-extrabold text-sm shadow-xl flex items-center justify-center gap-2.5 transition transform hover:-translate-y-0.5"
+                  >
+                    <svg class="w-5 h-5 fill-current shrink-0" viewBox="0 0 24 24">
+                      <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771z"/>
+                    </svg>
+                    <span>Place Order via WhatsApp</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onclick="navigate('cart')"
+                    class="w-full py-3 rounded-full bg-white hover:bg-brand-black text-brand-black hover:text-white border border-gray-300 font-display font-bold text-xs transition"
+                  >
+                    Back to Cart
+                  </button>
+                </div>
+
+                <p class="text-[11px] text-center text-brand-grayMuted leading-relaxed">
+                  Clicking "Place Order via WhatsApp" opens WhatsApp addressed to <strong>${getStoreWhatsAppIntl()}</strong> with your prefilled order summary so you can review and tap Send.
+                </p>
+              </div>
+            </div>
+          </form>
+        </div>
+      `;
+    }
+
+    function handleWhatsAppCheckoutSubmit(e) {
+      e.preventDefault();
+      if (isSubmittingOrder) return;
+
+      const errorBanner = document.getElementById('checkout-error-banner');
+      const showValidationError = (msg) => {
+        if (errorBanner) {
+          errorBanner.textContent = msg;
+          errorBanner.classList.remove('hidden');
+          errorBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        showToast(msg, 'error');
+      };
+
+      const { detailedItems, subtotal, discount, shippingFee, total } = calculateCartTotals();
+      if (detailedItems.length === 0) {
+        showValidationError('Your shopping cart is empty. Please add products before checking out.');
+        return;
+      }
+
+      const fd = new FormData(e.target);
+      const customerName = String(fd.get('fullName') || '').trim();
+      const customerMobile = String(fd.get('mobile') || '').trim();
+      const customerWhatsapp = String(fd.get('whatsapp') || '').trim();
+      const customerEmail = String(fd.get('email') || '').trim();
+      const country = String(fd.get('country') || 'Pakistan').trim();
+      const province = String(fd.get('province') || '').trim();
+      const city = String(fd.get('city') || '').trim();
+      const streetAddress = String(fd.get('streetAddress') || '').trim();
+      const houseNumber = String(fd.get('houseNumber') || '').trim();
+      const area = String(fd.get('area') || '').trim();
+      const postalCode = String(fd.get('postalCode') || '').trim();
+      const landmark = String(fd.get('landmark') || '').trim();
+      const specialInstructions = String(fd.get('specialInstructions') || '').trim();
+      const paymentMethod = String(fd.get('paymentMethod') || 'Cash on Delivery').trim();
+
+      if (!customerName) {
+        showValidationError('Please enter your Full Name.');
+        return;
+      }
+      if (!customerMobile || !isValidPakistaniPhone(customerMobile)) {
+        showValidationError('Please enter a valid Pakistani mobile number (e.g., 03001234567 or +923001234567).');
+        return;
+      }
+      if (customerWhatsapp && !isValidPakistaniPhone(customerWhatsapp)) {
+        showValidationError('Please enter a valid Pakistani WhatsApp number or leave it blank.');
+        return;
+      }
+      if (!country || !province || !city || !streetAddress) {
+        showValidationError('Please complete all required Shipping Address fields (Country, Province, City, and Complete Street Address).');
+        return;
+      }
+
+      // Validate inventory for all cart items
+      for (const item of detailedItems) {
+        if (item.qty < 1 || item.qty > item.product.stock) {
+          showValidationError(`Requested quantity for "${item.product.name}" exceeds available stock (${item.product.stock}).`);
+          return;
+        }
+      }
+
+      isSubmittingOrder = true;
+      if (errorBanner) errorBanner.classList.add('hidden');
+
+      const addressParts = [houseNumber, streetAddress, area].filter(Boolean);
+      const fullAddressComposed = addressParts.join(', ');
+      const orderId = `SS-${Math.floor(10000000 + Math.random() * 90000000)}`;
+      const originBase = (window.location && window.location.origin && window.location.origin !== 'null')
+        ? window.location.origin
+        : 'https://saimstore.pk';
+
+      const newOrderRequest = {
+        id: orderId,
+        createdAt: new Date().toISOString(),
+        customerName,
+        customerMobile,
+        customerWhatsapp,
+        customerEmail,
+        country,
+        province,
+        city,
+        streetAddress,
+        houseNumber,
+        area,
+        fullAddressComposed,
+        postalCode,
+        landmark,
+        specialInstructions,
+        paymentMethod,
+        status: 'Pending WhatsApp Confirmation',
+        mode: 'Local Demo Mode (Pending Customer WhatsApp Send)',
+        subtotal,
+        discount,
+        shippingFee,
+        total,
+        items: detailedItems.map(i => ({
+          productId: i.product.id,
+          name: i.product.name,
+          variant: [i.color, i.size].filter(Boolean).join(' / '),
+          unitPrice: i.product.price,
+          qty: i.qty,
+          total: i.lineTotal,
+          link: `${originBase}/#/product/${i.product.slug}`
+        }))
+      };
+
+      state.orders.unshift(newOrderRequest);
+      saveState();
+
+      // Open WhatsApp immediately upon user submit action
+      const waUrl = buildWhatsAppOrderUrl(newOrderRequest);
+      window.open(waUrl, '_blank', 'noopener,noreferrer');
+
+      isSubmittingOrder = false;
+      // IMPORTANT PART 10: Do NOT clear cart prematurely and do NOT claim "Order Confirmed" before user taps Send in WhatsApp
+      navigate('checkout-whatsapp-ready', { orderId: newOrderRequest.id });
+    }
+
+    function renderWhatsAppReadyPage(orderId) {
+      const order = state.orders.find(o => o.id === orderId) || state.orders[0];
+      if (!order) return renderHomepage();
+      const waUrl = buildWhatsAppOrderUrl(order);
+      const messagePreview = generateWhatsAppOrderMessage(order);
+
+      return `
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-6">
+          <div class="bg-white rounded-3xl border-2 border-emerald-500 p-6 sm:p-8 shadow-xl space-y-5 text-center">
+            <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+              <i data-lucide="message-circle" class="w-9 h-9"></i>
+            </div>
+
+            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-extrabold uppercase">
+              <span>Status: ${order.status}</span>
+            </div>
+
+            <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-brand-black">
+              Your order request is ready. Please press Send in WhatsApp to submit it to Saim Store.
+            </h1>
+
+            <p class="text-xs sm:text-sm text-brand-grayMuted max-w-xl mx-auto leading-relaxed">
+              Order Reference <strong class="text-brand-black">${order.id}</strong> has been prepared in local demo mode and addressed to official Saim Store WhatsApp <strong>${getStoreWhatsAppLocal()} (${getStoreWhatsAppIntl()})</strong>. Your cart items have been preserved in case you want to modify your order.
+            </p>
+
+            <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <a
+                href="${waUrl}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="px-7 py-4 rounded-full bg-[#25D366] hover:bg-[#1ebe5b] text-white font-display font-extrabold text-sm shadow-lg flex items-center gap-2 transition"
+              >
+                <i data-lucide="external-link" class="w-4 h-4"></i>
+                <span>Open WhatsApp Again</span>
+              </a>
+
+              <button
+                onclick="clearCartAfterWhatsAppSent('${order.id}')"
+                class="px-6 py-4 rounded-full bg-brand-black hover:bg-brand-orange text-white font-display font-bold text-xs sm:text-sm transition"
+              >
+                I Have Sent the Message in WhatsApp (Clear Cart)
+              </button>
+
+              <button
+                onclick="navigate('checkout')"
+                class="px-5 py-3.5 rounded-full border border-gray-300 hover:bg-gray-100 text-xs font-bold transition"
+              >
+                Edit Order Details
+              </button>
+            </div>
+          </div>
+
+          <!-- Formatted WhatsApp Order Message Preview -->
+          <div class="bg-brand-grayLight rounded-3xl border border-gray-200 p-6 space-y-3">
+            <div class="flex items-center justify-between">
+              <h2 class="font-display font-bold text-sm uppercase tracking-wider text-brand-black">Prefilled WhatsApp Message Preview</h2>
+              <button
+                onclick="navigator.clipboard.writeText(generateWhatsAppOrderMessage(state.orders.find(o=>o.id==='${order.id}'))); showToast('Order message copied to clipboard!');"
+                class="text-xs font-bold text-brand-orange hover:underline"
+              >
+                Copy Message Text
+              </button>
+            </div>
+            <pre class="bg-white p-4 rounded-2xl border border-gray-200 text-xs font-mono whitespace-pre-wrap text-gray-800 leading-relaxed overflow-x-auto">${messagePreview}</pre>
+          </div>
+        </div>
+      `;
+    }
+
+    function clearCartAfterWhatsAppSent(orderId) {
+      state.cart = [];
+      appliedCouponCode = '';
+      saveState();
+      renderCartDrawer();
+      showToast(`Thank you! Cart cleared for order request ${orderId}.`);
+      navigate('account');
+    }
+
+    /********************************************************************
+     * 12. HEADER MEGA MENU, MOBILE DRAWER & SEARCH HANDLERS
+     ********************************************************************/
+    function updateHeaderBadges() {
+      const totalCartQty = state.cart.reduce((sum, item) => sum + (Number(item.qty) || 0), 0);
+      const cartBadge = document.getElementById('cart-badge');
+      const drawerCount = document.getElementById('drawer-cart-count');
+      if (cartBadge) cartBadge.textContent = totalCartQty;
+      if (drawerCount) drawerCount.textContent = totalCartQty;
+
+      const wishBadge = document.getElementById('wishlist-badge');
+      if (wishBadge) {
+        if (state.wishlist.length > 0) {
+          wishBadge.textContent = state.wishlist.length;
+          wishBadge.classList.remove('hidden');
+        } else {
+          wishBadge.classList.add('hidden');
+        }
+      }
+
+      const storeNameEl = document.getElementById('header-store-name');
+      if (storeNameEl) storeNameEl.textContent = state.settings.storeName;
+
+      const waFooterEl = document.getElementById('footer-whatsapp-display');
+      if (waFooterEl) waFooterEl.textContent = getStoreWhatsAppLocal();
+    }
+
+    function renderMegaMenu(activeSlug = activeMegaDeptSlug) {
+      activeMegaDeptSlug = activeSlug;
+      const deptListEl = document.getElementById('mega-dept-list');
+      const subPanelEl = document.getElementById('mega-sub-panel');
+      if (!deptListEl || !subPanelEl) return;
+
+      const activeDept = DEPARTMENTS.find(d => d.slug === activeSlug) || DEPARTMENTS[0];
+
+      deptListEl.innerHTML = DEPARTMENTS.map(dept => {
+        const isSelected = dept.slug === activeDept.slug;
+        return `
+          <button
+            onmouseenter="renderMegaMenu('${dept.slug}')"
+            onclick="navigate('category', {slug: '${dept.slug}'}); closeMegaMenu();"
+            class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-left text-xs font-bold transition ${
+              isSelected ? 'bg-brand-black text-white shadow-xs' : 'text-gray-700 hover:bg-gray-200/70'
+            }"
+          >
+            <span class="flex items-center gap-2.5">
+              <i data-lucide="${dept.icon}" class="w-4 h-4 ${isSelected ? 'text-brand-orange' : 'text-gray-500'}"></i>
+              <span>${dept.name}</span>
+            </span>
+            <i data-lucide="chevron-right" class="w-4 h-4 opacity-60"></i>
+          </button>
+        `;
+      }).join('');
+
+      const deptProducts = state.products.filter(p => p.departmentSlug === activeDept.slug && p.active).slice(0, 2);
+
+      subPanelEl.innerHTML = `
+        <div>
+          <div class="flex items-center justify-between pb-3 mb-4 border-b border-gray-100">
+            <div>
+              <span class="text-[11px] font-extrabold uppercase tracking-wider text-brand-orange">${activeDept.name} Mini-Store</span>
+              <h3 class="font-display font-bold text-lg text-brand-black">${activeDept.sectionHeading}</h3>
+            </div>
+            <button onclick="navigate('category', {slug: '${activeDept.slug}'}); closeMegaMenu();" class="text-xs font-bold text-brand-orange hover:underline flex items-center gap-1">
+              <span>${activeDept.viewAllLabel}</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+          <p class="text-xs font-bold uppercase tracking-wider text-brand-grayMuted mb-3">Subcategories</p>
+          <div class="grid grid-cols-2 gap-2">
+            ${activeDept.subcategories.map(sub => `
+              <button
+                onclick="navigate('subcategory', {slug: '${activeDept.slug}', sub: '${slugify(sub)}'}); closeMegaMenu();"
+                class="flex items-center justify-between p-2.5 rounded-xl border border-gray-100 hover:border-brand-orange hover:bg-orange-50/40 text-left text-xs font-semibold text-gray-800 transition group"
+              >
+                <span>${sub}</span>
+                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-gray-400 group-hover:text-brand-orange"></i>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-gray-100 mt-4">
+          <div class="grid grid-cols-2 gap-3">
+            ${deptProducts.map(p => `
+              <div onclick="navigate('product', {slug: '${p.slug}'}); closeMegaMenu();" class="flex items-center gap-3 p-2 rounded-xl bg-brand-grayLight hover:bg-gray-200/70 cursor-pointer transition">
+                <img src="${p.image}" alt="${p.name}" class="w-12 h-12 rounded-lg object-cover bg-white shrink-0" />
+                <div class="min-w-0">
+                  <p class="text-xs font-bold text-brand-black truncate">${p.name}</p>
+                  <p class="text-xs font-extrabold text-brand-orange">${formatRs(p.price)}</p>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      safeRefreshIcons();
+    }
+
+    function openMegaMenu() {
+      const panel = document.getElementById('mega-menu-panel');
+      const chev = document.getElementById('mega-chevron');
+      if (panel) panel.classList.remove('hidden');
+      if (chev) chev.classList.add('rotate-180');
+      renderMegaMenu(activeMegaDeptSlug);
+    }
+    function closeMegaMenu() {
+      const panel = document.getElementById('mega-menu-panel');
+      const chev = document.getElementById('mega-chevron');
+      if (panel) panel.classList.add('hidden');
+      if (chev) chev.classList.remove('rotate-180');
+    }
+    function toggleMegaMenu() {
+      const panel = document.getElementById('mega-menu-panel');
+      if (panel && panel.classList.contains('hidden')) openMegaMenu();
+      else closeMegaMenu();
+    }
+
+    function renderMobileAccordion() {
+      const container = document.getElementById('mobile-accordion-categories');
+      if (!container) return;
+      container.innerHTML = DEPARTMENTS.map((dept, idx) => `
+        <div class="border border-gray-200 rounded-xl overflow-hidden">
+          <div class="flex items-center justify-between px-3 py-2.5 bg-white">
+            <button onclick="navigate('category', {slug: '${dept.slug}'}); closeMobileMenu();" class="flex items-center gap-2.5 text-xs font-bold text-left">
+              <i data-lucide="${dept.icon}" class="w-4 h-4 text-brand-orange"></i>
+              <span>${dept.name}</span>
+            </button>
+            <button onclick="document.getElementById('mobile-sub-${idx}').classList.toggle('hidden')" class="p-1 rounded hover:bg-gray-100">
+              <i data-lucide="chevron-down" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <div id="mobile-sub-${idx}" class="hidden bg-brand-grayLight px-3 py-2 space-y-1 border-t border-gray-100">
+            ${dept.subcategories.map(sub => `
+              <button
+                onclick="navigate('subcategory', {slug: '${dept.slug}', sub: '${slugify(sub)}'}); closeMobileMenu();"
+                class="block w-full text-left text-xs py-1.5 px-2 rounded hover:bg-white text-gray-700 font-medium"
+              >
+                • ${sub}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+      safeRefreshIcons();
+    }
+
+    function toggleMobileMenu() {
+      document.getElementById('mobile-menu-backdrop').classList.remove('hidden');
+      document.getElementById('mobile-menu-drawer').classList.remove('-translate-x-full');
+      renderMobileAccordion();
+    }
+    function closeMobileMenu() {
+      document.getElementById('mobile-menu-backdrop').classList.add('hidden');
+      document.getElementById('mobile-menu-drawer').classList.add('-translate-x-full');
+    }
+    function toggleMobileSearch() {
+      const bar = document.getElementById('mobile-search-bar');
+      bar.classList.toggle('hidden');
+      if (!bar.classList.contains('hidden')) {
+        document.getElementById('mobile-search-input').focus();
+      }
+    }
+
+    function handleInstantSearch(query, isMobile = false) {
+      const q = (query || '').trim().toLowerCase();
+      const clearBtn = document.getElementById('desktop-search-clear');
+      if (clearBtn) clearBtn.classList.toggle('hidden', q.length === 0);
+
+      const box = document.getElementById(isMobile ? 'mobile-search-suggestions' : 'search-suggestions');
+      if (!box) return;
+      if (!q) {
+        box.classList.add('hidden');
+        return;
+      }
+
+      const matches = state.products.filter(p =>
+        p.active && (
+          p.name.toLowerCase().includes(q) ||
+          p.departmentName.toLowerCase().includes(q) ||
+          p.subcategoryName.toLowerCase().includes(q) ||
+          p.brand.toLowerCase().includes(q)
+        )
+      ).slice(0, 6);
+
+      if (matches.length === 0) {
+        box.innerHTML = `<div class="p-4 text-center text-xs text-gray-500">No matches for "<strong>${query}</strong>". Press Enter to search catalog.</div>`;
+      } else {
+        box.innerHTML = `
+          <div class="divide-y divide-gray-100">
+            ${matches.map(p => `
+              <button
+                onclick="navigate('product', {slug: '${p.slug}'}); clearInstantSearch();"
+                class="w-full flex items-center gap-3 p-3 hover:bg-brand-grayLight text-left transition"
+              >
+                <img src="${p.image}" alt="${p.name}" class="w-11 h-11 rounded-lg object-cover bg-gray-100 shrink-0" />
+                <div class="min-w-0 flex-1">
+                  <p class="text-xs font-bold text-brand-black truncate">${p.name}</p>
+                  <p class="text-[11px] text-brand-grayMuted">${p.departmentName} • ${p.subcategoryName}</p>
+                </div>
+                <span class="text-xs font-extrabold text-brand-orange shrink-0">${formatRs(p.price)}</span>
+              </button>
+            `).join('')}
+            <button
+              onclick="submitFullSearch('${query.replace(/'/g, '')}')"
+              class="w-full py-2.5 bg-brand-grayLight text-xs font-bold text-brand-orange hover:underline text-center block"
+            >
+              See All Results for "${query}" →
+            </button>
+          </div>
+        `;
+      }
+      box.classList.remove('hidden');
+    }
+
+    function clearInstantSearch() {
+      const dInput = document.getElementById('desktop-search-input');
+      const mInput = document.getElementById('mobile-search-input');
+      if (dInput) dInput.value = '';
+      if (mInput) mInput.value = '';
+      document.getElementById('search-suggestions')?.classList.add('hidden');
+      document.getElementById('mobile-search-suggestions')?.classList.add('hidden');
+      document.getElementById('desktop-search-clear')?.classList.add('hidden');
+    }
+
+    function submitFullSearch(query) {
+      filterState.searchQuery = (query || '').trim();
+      clearInstantSearch();
+      navigate('search', { q: filterState.searchQuery });
+    }
+
+    /********************************************************************
+     * 13. CART DRAWER, FULL CART, WISHLIST & DEPARTMENT PAGES
+     ********************************************************************/
+    function openCartDrawer() {
+      renderCartDrawer();
+      document.getElementById('cart-backdrop').classList.remove('hidden');
+      document.getElementById('cart-drawer').classList.remove('translate-x-full');
+    }
+    function closeCartDrawer() {
+      document.getElementById('cart-backdrop').classList.add('hidden');
+      document.getElementById('cart-drawer').classList.add('translate-x-full');
+    }
+
+    function renderCartDrawer() {
+      const { detailedItems, subtotal, shippingFee, total } = calculateCartTotals();
+      const itemsEl = document.getElementById('cart-drawer-items');
+      const footerEl = document.getElementById('cart-drawer-footer');
+      if (!itemsEl || !footerEl) return;
+
+      if (detailedItems.length === 0) {
+        itemsEl.innerHTML = `
+          <div class="h-full flex flex-col items-center justify-center text-center py-12">
+            <div class="w-16 h-16 rounded-full bg-brand-grayLight flex items-center justify-center mb-3 text-gray-400">
+              <i data-lucide="shopping-bag" class="w-8 h-8"></i>
+            </div>
+            <p class="font-display font-bold text-base">Your shopping bag is empty</p>
+            <p class="text-xs text-brand-grayMuted mt-1 max-w-xs">Browse our 12 mini-stores and add products to place your order via WhatsApp.</p>
+            <button onclick="closeCartDrawer(); navigate('shop');" class="mt-4 bg-brand-orange text-white text-xs font-bold px-5 py-2.5 rounded-full">
+              Start Shopping
+            </button>
+          </div>
+        `;
+        footerEl.innerHTML = '';
+      } else {
+        itemsEl.innerHTML = detailedItems.map(item => `
+          <div class="flex gap-3 p-3 rounded-2xl bg-brand-grayLight border border-gray-200/70">
+            <img src="${item.product.image}" alt="${item.product.name}" class="w-16 h-16 rounded-xl object-cover bg-white shrink-0" />
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-bold text-brand-black truncate">${item.product.name}</p>
+              <p class="text-[11px] text-brand-grayMuted">${item.color} • ${item.size}</p>
+              <p class="text-xs font-extrabold text-brand-orange mt-0.5">${formatRs(item.product.price)} × ${item.qty} = ${formatRs(item.lineTotal)}</p>
+              <div class="flex items-center justify-between mt-2">
+                <div class="inline-flex items-center bg-white rounded-lg border border-gray-200">
+                  <button onclick="updateCartQty(${item.index}, -1)" class="px-2.5 py-0.5 text-xs font-bold hover:text-brand-orange">-</button>
+                  <span class="px-2 text-xs font-bold">${item.qty}</span>
+                  <button onclick="updateCartQty(${item.index}, 1)" class="px-2.5 py-0.5 text-xs font-bold hover:text-brand-orange">+</button>
+                </div>
+                <button onclick="removeFromCart(${item.index})" class="text-xs text-gray-400 hover:text-red-600">Remove</button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+
+        footerEl.innerHTML = `
+          <div class="space-y-1.5 text-xs">
+            <div class="flex justify-between text-gray-600"><span>Subtotal</span><span class="font-bold">${formatRs(subtotal)}</span></div>
+            <div class="flex justify-between text-gray-600"><span>Delivery</span><span class="font-bold">${shippingFee === 0 ? 'FREE' : formatRs(shippingFee)}</span></div>
+            <div class="flex justify-between text-sm font-display font-extrabold text-brand-black pt-2 border-t border-gray-200">
+              <span>Grand Total</span>
+              <span class="text-brand-orange">${formatRs(total)}</span>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2 pt-2">
+            <button onclick="closeCartDrawer(); navigate('cart');" class="py-2.5 rounded-xl border border-brand-black text-xs font-bold hover:bg-gray-100 transition">
+              View Cart
+            </button>
+            <button onclick="closeCartDrawer(); navigate('checkout');" class="py-2.5 rounded-xl bg-brand-orange hover:bg-brand-orangeHover text-white text-xs font-bold transition">
+              Checkout
+            </button>
+          </div>
+        `;
+      }
+      safeRefreshIcons();
+    }
+
+    function renderFullCartPage() {
+      const { detailedItems, subtotal, discount, shippingFee, total } = calculateCartTotals();
+      return `
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <div class="flex items-center justify-between mb-8">
+            <h1 class="font-display font-extrabold text-2xl sm:text-3xl">Your Shopping Cart</h1>
+            <button onclick="navigate('shop')" class="text-xs sm:text-sm font-bold text-brand-orange hover:underline">+ Continue Shopping</button>
+          </div>
+          ${detailedItems.length === 0 ? `
+            <div class="text-center py-16 bg-brand-grayLight rounded-3xl">
+              <p class="font-display font-bold text-xl">Your shopping cart is empty</p>
+              <button onclick="navigate('shop')" class="mt-4 px-6 py-3 rounded-full bg-brand-orange text-white text-xs font-bold">Browse Products</button>
+            </div>
+          ` : `
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              <div class="lg:col-span-8 space-y-4">
+                ${detailedItems.map(item => `
+                  <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl border border-gray-200 bg-white">
+                    <div class="flex items-center gap-4">
+                      <img src="${item.product.image}" alt="${item.product.name}" class="w-20 h-20 rounded-xl object-cover bg-brand-grayLight" />
+                      <div>
+                        <button onclick="navigate('product', {slug: '${item.product.slug}'})" class="font-display font-bold text-sm sm:text-base hover:text-brand-orange text-left">${item.product.name}</button>
+                        <p class="text-xs text-brand-grayMuted mt-0.5">${item.product.departmentName} • Variant: ${item.color} / ${item.size}</p>
+                        <p class="text-xs font-bold text-gray-500 mt-1">Unit Price: ${formatRs(item.product.price)}</p>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-4 self-end sm:self-center">
+                      <div class="inline-flex items-center rounded-xl border border-gray-200 bg-brand-grayLight">
+                        <button onclick="updateCartQty(${item.index}, -1)" class="px-3 py-1.5 font-bold">-</button>
+                        <span class="px-3 text-xs font-bold">${item.qty}</span>
+                        <button onclick="updateCartQty(${item.index}, 1)" class="px-3 py-1.5 font-bold">+</button>
+                      </div>
+                      <span class="font-display font-extrabold text-sm sm:text-base text-brand-orange w-28 text-right">${formatRs(item.lineTotal)}</span>
+                      <button onclick="removeFromCart(${item.index})" class="text-gray-400 hover:text-red-600 p-1">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                      </button>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+
+              <div class="lg:col-span-4 bg-brand-grayLight p-6 rounded-3xl border border-gray-200 h-fit space-y-4">
+                <h2 class="font-display font-bold text-lg">Order Summary</h2>
+                <div class="flex gap-2">
+                  <input
+                    id="coupon-input"
+                    type="text"
+                    value="${appliedCouponCode}"
+                    placeholder="Promo code (SAIM10)"
+                    class="flex-1 px-3.5 py-2 rounded-xl bg-white border border-gray-200 text-xs font-bold uppercase"
+                  />
+                  <button onclick="applyCoupon()" class="px-4 py-2 rounded-xl bg-brand-black text-white text-xs font-bold">Apply</button>
+                </div>
+                <div class="space-y-2 text-sm pt-2 border-t border-gray-200">
+                  <div class="flex justify-between"><span>Subtotal</span><span class="font-bold">${formatRs(subtotal)}</span></div>
+                  <div class="flex justify-between text-emerald-600"><span>Discount</span><span class="font-bold">-${formatRs(discount)}</span></div>
+                  <div class="flex justify-between"><span>Delivery Charges</span><span class="font-bold">${shippingFee === 0 ? 'FREE' : formatRs(shippingFee)}</span></div>
+                  <div class="flex justify-between text-base font-display font-extrabold pt-3 border-t border-gray-200">
+                    <span>Grand Total</span>
+                    <span class="text-brand-orange">${formatRs(total)}</span>
+                  </div>
+                </div>
+                <button onclick="navigate('checkout')" class="w-full py-4 rounded-full bg-brand-orange hover:bg-brand-orangeHover text-white font-display font-bold text-sm transition shadow-md">
+                  Proceed to Checkout
+                </button>
+              </div>
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    function applyCoupon() {
+      const code = (document.getElementById('coupon-input')?.value || '').trim().toUpperCase();
+      const found = state.coupons.find(c => c.code.toUpperCase() === code && c.active);
+      if (!found) {
+        showToast('Invalid promo code. Try SAIM10.', 'error');
+        return;
+      }
+      appliedCouponCode = found.code;
+      showToast(`Promo code ${found.code} applied!`);
+      renderCurrentRoute();
+    }
+
+    function toggleWishlist(productId) {
+      const idx = state.wishlist.indexOf(productId);
+      if (idx > -1) {
+        state.wishlist.splice(idx, 1);
+        showToast('Removed from Wishlist');
+      } else {
+        state.wishlist.push(productId);
+        showToast('Saved to Wishlist ♥');
+      }
+      saveState();
+      renderCurrentRoute();
+    }
+
+    function renderWishlistPage() {
+      const items = state.products.filter(p => state.wishlist.includes(p.id));
+      return `
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <h1 class="font-display font-extrabold text-3xl mb-2">My Saved Wishlist (${items.length})</h1>
+          <p class="text-sm text-brand-grayMuted mb-8">Products saved across Saim Store departments.</p>
+          ${items.length === 0 ? `
+            <div class="text-center py-16 bg-brand-grayLight rounded-3xl">
+              <p class="font-display font-bold text-lg">Your wishlist is empty</p>
+              <button onclick="navigate('shop')" class="mt-4 px-6 py-2.5 rounded-full bg-brand-orange text-white text-xs font-bold">Explore Products</button>
+            </div>
+          ` : `
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              ${items.map(renderProductCard).join('')}
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    function renderAllCategoriesPage() {
+      return `
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <div class="text-center max-w-2xl mx-auto mb-10">
+            <span class="text-xs font-extrabold uppercase tracking-widest text-brand-orange">Saim Store Marketplace</span>
+            <h1 class="font-display font-extrabold text-3xl sm:text-4xl mt-1">All 12 Department Mini-Stores</h1>
+            <p class="text-sm text-brand-grayMuted mt-2">Choose any department below to browse its products and nested subcategories.</p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            ${DEPARTMENTS.map(dept => {
+              const count = state.products.filter(p => p.departmentSlug === dept.slug && p.active).length;
+              return `
+                <div class="rounded-3xl border border-gray-200 bg-white overflow-hidden shadow-xs hover:shadow-xl transition flex flex-col justify-between">
+                  <div>
+                    <div class="relative h-44 overflow-hidden cursor-pointer" onclick="navigate('category', {slug: '${dept.slug}'})">
+                      <img src="${dept.bannerImage}" alt="${dept.name}" class="w-full h-full object-cover hover:scale-105 transition duration-500" />
+                      <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                      <div class="absolute bottom-4 left-4 right-4 flex items-end justify-between text-white">
+                        <div>
+                          <span class="text-[11px] uppercase tracking-wider text-brand-orange font-bold">${count} Products</span>
+                          <h2 class="font-display font-bold text-xl">${dept.name}</h2>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center">
+                          <i data-lucide="${dept.icon}" class="w-5 h-5 text-white"></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="p-5">
+                      <p class="text-xs text-brand-grayMuted mb-3">${dept.tagline}</p>
+                      <div class="flex flex-wrap gap-1.5">
+                        ${dept.subcategories.map(sub => `
+                          <button
+                            onclick="navigate('subcategory', {slug: '${dept.slug}', sub: '${slugify(sub)}'})"
+                            class="text-[11px] px-2.5 py-1 rounded-lg bg-brand-grayLight hover:bg-brand-orange hover:text-white font-medium transition"
+                          >
+                            ${sub}
+                          </button>
+                        `).join('')}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="px-5 pb-5">
+                    <button
+                      onclick="navigate('category', {slug: '${dept.slug}'})"
+                      class="w-full py-2.5 rounded-xl bg-brand-black hover:bg-brand-orange text-white text-xs font-bold transition flex items-center justify-center gap-1.5"
+                    >
+                      <span>${dept.viewAllLabel}</span>
+                      <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderDepartmentStorefront(deptSlug, activeSubSlug = null) {
+      const dept = DEPARTMENTS.find(d => d.slug === deptSlug) || DEPARTMENTS[0];
+      let deptProducts = state.products.filter(p => p.departmentSlug === dept.slug && p.active);
+      if (activeSubSlug) {
+        deptProducts = deptProducts.filter(p => p.subcategorySlug === activeSubSlug);
+      }
+      const activeSubName = activeSubSlug ? dept.subcategories.find(s => slugify(s) === activeSubSlug) : null;
+
+      return `
+        <div>
+          <div class="relative bg-brand-black text-white overflow-hidden">
+            <img src="${dept.bannerImage}" alt="${dept.name}" class="absolute inset-0 w-full h-full object-cover opacity-35" />
+            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-orange text-white text-xs font-bold">
+                <i data-lucide="${dept.icon}" class="w-3.5 h-3.5"></i>
+                <span>${dept.name} Mini-Store</span>
+              </div>
+              <h1 class="font-display font-extrabold text-3xl sm:text-5xl mt-2">
+                ${dept.sectionHeading} ${activeSubName ? `<span class="text-brand-orange">/ ${activeSubName}</span>` : ''}
+              </h1>
+              <p class="text-gray-200 text-sm sm:text-base max-w-xl mt-2">${dept.tagline}</p>
+
+              <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pt-6 mt-6 border-t border-white/15">
+                <button
+                  onclick="navigate('category', {slug: '${dept.slug}'})"
+                  class="px-4 py-2 rounded-full text-xs font-bold transition shrink-0 ${
+                    !activeSubSlug ? 'bg-brand-orange text-white' : 'bg-white/15 text-white hover:bg-white/25'
+                  }"
+                >
+                  All ${dept.name}
+                </button>
+                ${dept.subcategories.map(sub => {
+                  const sSlug = slugify(sub);
+                  return `
+                    <button
+                      onclick="navigate('subcategory', {slug: '${dept.slug}', sub: '${sSlug}'})"
+                      class="px-4 py-2 rounded-full text-xs font-semibold transition shrink-0 ${
+                        activeSubSlug === sSlug ? 'bg-brand-orange text-white' : 'bg-white/15 text-white hover:bg-white/25'
+                      }"
+                    >
+                      ${sub}
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          </div>
+
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+              ${deptProducts.map(renderProductCard).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCatalogListingPage(pageType, params = {}) {
+      let list = state.products.filter(p => p.active);
+      let title = 'All Saim Store Products';
+
+      if (pageType === 'new-arrivals') {
+        list = list.filter(p => p.isNewArrival);
+        title = 'New Arrivals';
+      } else if (pageType === 'best-sellers') {
+        list = list.filter(p => p.isBestSeller);
+        title = 'Best Sellers';
+      } else if (pageType === 'deals') {
+        list = list.filter(p => p.isDeal);
+        title = "Today's Flash Deals";
+      } else if (pageType === 'search') {
+        const q = (params.q || filterState.searchQuery || '').toLowerCase();
+        title = q ? `Search Results for "${params.q || filterState.searchQuery}"` : 'Search Catalog';
+        if (q) {
+          list = list.filter(p =>
+            p.name.toLowerCase().includes(q) ||
+            p.departmentName.toLowerCase().includes(q) ||
+            p.subcategoryName.toLowerCase().includes(q) ||
+            p.brand.toLowerCase().includes(q)
+          );
+        }
+      }
+
+      if (filterState.department !== 'all') {
+        list = list.filter(p => p.departmentSlug === filterState.department);
+      }
+
+      return `
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+            <div>
+              <span class="text-xs font-extrabold uppercase tracking-widest text-brand-orange">Saim Store Catalog</span>
+              <h1 class="font-display font-extrabold text-3xl mt-1">${title} (${list.length})</h1>
+            </div>
+            <select
+              onchange="filterState.department = this.value; renderCurrentRoute();"
+              class="px-4 py-2.5 rounded-xl bg-brand-grayLight border border-gray-200 text-xs font-bold"
+            >
+              <option value="all">Filter: All 12 Departments</option>
+              ${DEPARTMENTS.map(d => `<option value="${d.slug}" ${filterState.department === d.slug ? 'selected' : ''}>${d.name}</option>`).join('')}
+            </select>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            ${list.slice(0, 36).map(renderProductCard).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    /********************************************************************
+     * 14. PART 15: COMPATIBLE ADMIN DASHBOARD WITH DYNAMIC DEPARTMENT
+     *     AUTOMATION & WHATSAPP CONFIGURATION
+     ********************************************************************/
+    function renderAdminDashboard(activeTab = 'overview') {
+      return `
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div class="bg-brand-black text-white p-6 rounded-3xl mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-2xl bg-brand-orange flex items-center justify-center font-display font-extrabold text-xl">SS</div>
+              <div>
+                <h1 class="font-display font-extrabold text-xl sm:text-2xl">Saim Store Admin Dashboard</h1>
+                <p class="text-xs text-gray-400">Dynamic Catalog, 12 Department Sliders, WhatsApp Number (${getStoreWhatsAppLocal()}) & Order Requests</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              ${[
+                { id: 'overview', label: 'Orders & Overview' },
+                { id: 'products', label: 'Add / Manage Products' },
+                { id: 'settings', label: 'WhatsApp & Store Settings' }
+              ].map(t => `
+                <button
+                  onclick="navigate('admin', {tab: '${t.id}'})"
+                  class="px-4 py-2 rounded-xl text-xs font-bold transition ${
+                    activeTab === t.id ? 'bg-brand-orange text-white' : 'bg-white/10 text-gray-300 hover:bg-white/20'
+                  }"
+                >
+                  ${t.label}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          ${activeTab === 'overview' ? `
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+              <div class="bg-brand-grayLight p-5 rounded-2xl border border-gray-200">
+                <p class="text-xs font-bold text-brand-grayMuted">Total Products in Sliders</p>
+                <p class="font-display font-extrabold text-2xl mt-1">${state.products.length}</p>
+              </div>
+              <div class="bg-brand-grayLight p-5 rounded-2xl border border-gray-200">
+                <p class="text-xs font-bold text-brand-grayMuted">WhatsApp Order Requests</p>
+                <p class="font-display font-extrabold text-2xl text-brand-orange mt-1">${state.orders.length}</p>
+              </div>
+              <div class="bg-brand-grayLight p-5 rounded-2xl border border-gray-200">
+                <p class="text-xs font-bold text-brand-grayMuted">Active WhatsApp Number</p>
+                <p class="font-display font-extrabold text-xl text-emerald-600 mt-1">${getStoreWhatsAppLocal()} (${getStoreWhatsAppIntl()})</p>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-3xl border border-gray-200 p-6 space-y-4">
+              <h2 class="font-display font-bold text-lg">Customer WhatsApp Order Requests</h2>
+              ${state.orders.map(o => `
+                <div class="p-4 rounded-2xl bg-brand-grayLight border border-gray-200 flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs">
+                  <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                      <span class="font-display font-bold text-sm">${o.id}</span>
+                      <span class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold">${o.status}</span>
+                    </div>
+                    <p class="font-bold">${o.customerName} • Mobile: ${o.customerMobile}</p>
+                    <p class="text-gray-600">${o.city}, ${o.province} — ${o.streetAddress}</p>
+                    <p class="text-brand-orange font-bold">${o.items.map(i => `${i.name} (×${i.qty})`).join(', ')}</p>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <select onchange="updateAdminOrderStatus('${o.id}', this.value)" class="px-3 py-2 rounded-xl bg-white border border-gray-200 font-bold">
+                      ${['Pending WhatsApp Confirmation', 'Confirmed via WhatsApp', 'Dispatched', 'Delivered', 'Cancelled'].map(st => `
+                        <option value="${st}" ${o.status === st ? 'selected' : ''}>${st}</option>
+                      `).join('')}
+                    </select>
+                    <span class="font-display font-extrabold text-sm">${formatRs(o.total)}</span>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+
+          ${activeTab === 'products' ? `
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              <div class="lg:col-span-5 bg-brand-grayLight p-6 rounded-3xl border border-gray-200 h-fit">
+                <h2 class="font-display font-bold text-lg mb-1">Add New Product</h2>
+                <p class="text-xs text-brand-grayMuted mb-4">Adding a product to any department automatically includes it in that department's homepage moving slider and store page.</p>
+                <form onsubmit="handleAdminAddProduct(event)" class="space-y-3 text-xs">
+                  <div>
+                    <label class="font-bold block mb-1">Product Name *</label>
+                    <input name="name" required placeholder="e.g. Galaxy Smart Ring Pro" class="w-full px-3.5 py-2 rounded-xl bg-white border border-gray-200" />
+                  </div>
+                  <div class="grid grid-cols-2 gap-2">
+                    <div>
+                      <label class="font-bold block mb-1">Main Department *</label>
+                      <select id="admin-dept-select" name="departmentSlug" required onchange="populateAdminSubcategories(this.value)" class="w-full px-3 py-2 rounded-xl bg-white border border-gray-200">
+                        ${DEPARTMENTS.map(d => `<option value="${d.slug}">${d.name}</option>`).join('')}
+                      </select>
+                    </div>
+                    <div>
+                      <label class="font-bold block mb-1">Subcategory *</label>
+                      <select id="admin-sub-select" name="subcategoryName" required class="w-full px-3 py-2 rounded-xl bg-white border border-gray-200">
+                        ${DEPARTMENTS[0].subcategories.map(s => `<option value="${s}">${s}</option>`).join('')}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-3 gap-2">
+                    <div>
+                      <label class="font-bold block mb-1">Price (PKR) *</label>
+                      <input name="price" type="number" required value="4500" class="w-full px-3 py-2 rounded-xl bg-white border border-gray-200" />
+                    </div>
+                    <div>
+                      <label class="font-bold block mb-1">Original Price</label>
+                      <input name="oldPrice" type="number" value="5500" class="w-full px-3 py-2 rounded-xl bg-white border border-gray-200" />
+                    </div>
+                    <div>
+                      <label class="font-bold block mb-1">Stock Qty *</label>
+                      <input name="stock" type="number" required value="30" class="w-full px-3 py-2 rounded-xl bg-white border border-gray-200" />
+                    </div>
+                  </div>
+                  <div>
+                    <label class="font-bold block mb-1">Product Image URL *</label>
+                    <input name="image" required value="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80" class="w-full px-3.5 py-2 rounded-xl bg-white border border-gray-200" />
+                  </div>
+                  <div class="flex flex-wrap gap-4 pt-1">
+                    <label class="inline-flex items-center gap-1.5 font-semibold"><input type="checkbox" name="isFeatured" checked class="accent-brand-orange" /> Featured Slider</label>
+                    <label class="inline-flex items-center gap-1.5 font-semibold"><input type="checkbox" name="isTrending" checked class="accent-brand-orange" /> Trending Slider</label>
+                    <label class="inline-flex items-center gap-1.5 font-semibold"><input type="checkbox" name="isBestSeller" class="accent-brand-orange" /> Best Sellers</label>
+                  </div>
+                  <button type="submit" class="w-full py-3 rounded-full bg-brand-orange text-white font-display font-bold">
+                    Publish Product to Store & Sliders
+                  </button>
+                </form>
+              </div>
+
+              <div class="lg:col-span-7 bg-white p-6 rounded-3xl border border-gray-200">
+                <h2 class="font-display font-bold text-lg mb-4">Active Product Catalog (${state.products.length})</h2>
+                <div class="space-y-2.5 max-h-[500px] overflow-y-auto pr-1">
+                  ${state.products.slice(0, 25).map(p => `
+                    <div class="flex items-center justify-between gap-3 p-3 rounded-2xl bg-brand-grayLight text-xs">
+                      <div class="flex items-center gap-3 min-w-0">
+                        <img src="${p.image}" class="w-11 h-11 rounded-xl object-cover bg-white shrink-0" />
+                        <div class="min-w-0">
+                          <p class="font-bold truncate">${p.name}</p>
+                          <p class="text-gray-500">${p.departmentName} → ${p.subcategoryName} • Stock: ${p.stock}</p>
+                        </div>
+                      </div>
+                      <span class="font-extrabold text-brand-orange shrink-0">${formatRs(p.price)}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+          ` : ''}
+
+          ${activeTab === 'settings' ? `
+            <form onsubmit="handleSaveAdminSettings(event)" class="bg-brand-grayLight p-6 rounded-3xl border border-gray-200 max-w-2xl space-y-4 text-xs">
+              <h2 class="font-display font-bold text-lg">WhatsApp Ordering & Delivery Configuration</h2>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="font-bold block mb-1">Local WhatsApp Number</label>
+                  <input name="whatsappLocal" value="${getStoreWhatsAppLocal()}" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-gray-200 font-bold" />
+                </div>
+                <div>
+                  <label class="font-bold block mb-1">International WhatsApp Number (wa.me)</label>
+                  <input name="whatsappInternational" value="${getStoreWhatsAppIntl()}" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-gray-200 font-bold" />
+                </div>
+                <div>
+                  <label class="font-bold block mb-1">Standard Delivery Fee (PKR)</label>
+                  <input name="shippingFee" type="number" value="${state.settings.shippingFee}" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-gray-200" />
+                </div>
+                <div>
+                  <label class="font-bold block mb-1">Free Delivery Threshold (PKR)</label>
+                  <input name="freeShippingThreshold" type="number" value="${state.settings.freeShippingThreshold}" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-gray-200" />
+                </div>
+              </div>
+              <button type="submit" class="px-6 py-3 rounded-full bg-brand-orange text-white font-display font-bold">
+                Save Configuration
+              </button>
+            </form>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    function populateAdminSubcategories(deptSlug) {
+      const dept = DEPARTMENTS.find(d => d.slug === deptSlug) || DEPARTMENTS[0];
+      const subSelect = document.getElementById('admin-sub-select');
+      if (subSelect) {
+        subSelect.innerHTML = dept.subcategories.map(s => `<option value="${s}">${s}</option>`).join('');
+      }
+    }
+
+    function handleAdminAddProduct(e) {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const dept = DEPARTMENTS.find(d => d.slug === fd.get('departmentSlug')) || DEPARTMENTS[0];
+      const subName = fd.get('subcategoryName') || dept.subcategories[0];
+      const price = Number(fd.get('price')) || 1000;
+      const oldPrice = Number(fd.get('oldPrice')) || price;
+      const discountPercent = oldPrice > price ? Math.round(((oldPrice - price) / oldPrice) * 100) : 0;
+
+      const newProduct = {
+        id: `prod-${Date.now()}`,
+        sku: `SS-${dept.slug.substring(0, 3).toUpperCase()}-${Math.floor(100 + Math.random() * 900)}`,
+        name: fd.get('name'),
+        slug: `${slugify(fd.get('name'))}-${Date.now()}`,
+        departmentSlug: dept.slug,
+        departmentName: dept.name,
+        subcategorySlug: slugify(subName),
+        subcategoryName: subName,
+        brand: 'SaimSelect',
+        price,
+        oldPrice,
+        discountPercent,
+        rating: 5.0,
+        reviewCount: 1,
+        stock: Number(fd.get('stock')) || 20,
+        isFeatured: fd.get('isFeatured') === 'on',
+        isTrending: fd.get('isTrending') === 'on',
+        isBestSeller: fd.get('isBestSeller') === 'on',
+        isNewArrival: true,
+        isDeal: discountPercent > 0,
+        active: true,
+        image: fd.get('image'),
+        gallery: [fd.get('image')],
+        shortDescription: `Newly added to the ${dept.name} department.`,
+        fullDescription: `${fd.get('name')} — available now in the Saim Store ${dept.name} department with direct WhatsApp checkout.`,
+        options: { colors: ['Obsidian Black', 'Pearl White'], sizes: ['Standard'] },
+        specs: [{ label: 'Department', value: dept.name }, { label: 'Subcategory', value: subName }],
+        createdAt: new Date().toISOString()
+      };
+
+      state.products.unshift(newProduct);
+      saveState();
+      showToast(`Added "${newProduct.name}" to ${dept.name} Store & Homepage Sliders!`);
+      renderCurrentRoute();
+    }
+
+    function updateAdminOrderStatus(orderId, status) {
+      const ord = state.orders.find(o => o.id === orderId);
+      if (ord) {
+        ord.status = status;
+        saveState();
+        showToast(`Order ${orderId} updated to "${status}"`);
+        renderCurrentRoute();
+      }
+    }
+
+    function handleSaveAdminSettings(e) {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      state.settings.whatsappLocal = String(fd.get('whatsappLocal') || '03396497058').trim();
+      state.settings.whatsappInternational = sanitizeWhatsAppNumber(fd.get('whatsappInternational') || '923396497058');
+      state.settings.shippingFee = Number(fd.get('shippingFee')) || 250;
+      state.settings.freeShippingThreshold = Number(fd.get('freeShippingThreshold')) || 5000;
+      saveState();
+      showToast('WhatsApp & Delivery settings updated!');
+      renderCurrentRoute();
+    }
+
+    /********************************************************************
+     * 15. CUSTOMER ACCOUNT & STATIC INFO PAGES
+     ********************************************************************/
+    function renderAccountPage() {
+      return `
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-xs font-extrabold uppercase tracking-widest text-brand-orange">Customer Portal</span>
+              <h1 class="font-display font-extrabold text-3xl">My Order Requests (${state.orders.length})</h1>
+            </div>
+            <button onclick="navigate('admin')" class="px-5 py-2.5 rounded-full bg-brand-black text-white text-xs font-bold">
+              Open Admin Dashboard
+            </button>
+          </div>
+
+          <div class="space-y-4">
+            ${state.orders.map(order => `
+              <div class="p-5 rounded-3xl bg-brand-grayLight border border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="space-y-1 text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="font-display font-extrabold text-sm">${order.id}</span>
+                    <span class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold">${order.status}</span>
+                  </div>
+                  <p class="font-semibold">${order.customerName} •${order.customerMobile}</p>
+                  <p class="text-gray-600">${order.city},${order.province}</p>
+                  <p class="text-brand-black font-medium">${order.items.map(i => `${i.name} (×${i.qty})`).join(', ')}</p>
+                </div>
+                <div class="flex sm:flex-col items-end justify-between gap-2">
+                  <span class="font-display font-extrabold text-base text-brand-orange">${formatRs(order.total)}</span>
+                  <button
+                    onclick="navigate('checkout-whatsapp-ready', {orderId: '${order.id}'})"
+                    class="px-4 py-2 rounded-full bg-[#25D366] text-white text-xs font-bold"
+                  >
+                    Open in WhatsApp
+                  </button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderStaticInfoPage(page) {
+      const titles = {
+        'shipping-policy': 'Shipping & Delivery Policy',
+        'return-policy': '7-Day Easy Returns & Replacement Policy',
+        'privacy-policy': 'Customer Privacy Policy'
+      };
+      return `
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-4">
+          <span class="text-xs font-extrabold uppercase tracking-widest text-brand-orange">Saim Store Official Policy</span>
+          <h1 class="font-display font-extrabold text-3xl">${titles[page] || 'Store Information'}</h1>
+          <div class="bg-brand-grayLight p-6 rounded-3xl border border-gray-200 text-sm text-gray-700 leading-relaxed space-y-3">
+            <p><strong>Saim Store (SS)</strong> provides nationwide Cash on Delivery across Pakistan with direct order verification via our official WhatsApp line: <strong>03396497058</strong>.</p>
+            <p>All orders over Rs. 5,000 qualify for free delivery. Standard courier delivery takes 2–4 working days across major cities in Pakistan.</p>
+          </div>
+        </div>
+      `;
+    }
+
+    /********************************************************************
+     * 16. ROUTER & IMMEDIATE RESILIENT BOOTSTRAP
+     ********************************************************************/
+    function navigate(page, params = {}) {
+      currentRoute = { page, params };
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      renderCurrentRoute();
+    }
+
+    function renderCurrentRoute() {
+      const view = document.getElementById('app-view');
+      if (!view) return;
+      const { page, params } = currentRoute;
+
+      try {
+        switch (page) {
+          case 'home':
+            view.innerHTML = renderHomepage();
+            startHeroAutoplay();
+            setTimeout(initNetflixSliders, 30);
+            break;
+          case 'categories':
+            view.innerHTML = renderAllCategoriesPage();
+            break;
+          case 'category':
+            view.innerHTML = renderDepartmentStorefront(params.slug, null);
+            break;
+          case 'subcategory':
+            view.innerHTML = renderDepartmentStorefront(params.slug, params.sub);
+            break;
+          case 'shop':
+          case 'new-arrivals':
+          case 'best-sellers':
+          case 'deals':
+          case 'search':
+            view.innerHTML = renderCatalogListingPage(page, params);
+            break;
+          case 'product':
+            view.innerHTML = renderProductDetailPage(params.slug);
+            break;
+          case 'wishlist':
+            view.innerHTML = renderWishlistPage();
+            break;
+          case 'cart':
+            view.innerHTML = renderFullCartPage();
+            break;
+          case 'checkout':
+            view.innerHTML = renderCheckoutPage();
+            break;
+          case 'checkout-whatsapp-ready':
+            view.innerHTML = renderWhatsAppReadyPage(params.orderId);
+            break;
+          case 'account':
+            view.innerHTML = renderAccountPage();
+            break;
+          case 'admin':
+            view.innerHTML = renderAdminDashboard(params.tab || 'overview');
+            break;
+          default:
+            view.innerHTML = renderStaticInfoPage(page);
+        }
+      } catch (err) {
+        console.error('Route render recovery:', err);
+        view.innerHTML = renderHomepage();
+      }
+
+      updateHeaderBadges();
+      safeRefreshIcons();
+    }
+
+    // Immediate self-healing mount (executes right away + on DOMContentLoaded)
+    (function bootstrapSaimStore() {
+      renderCurrentRoute();
+      renderCartDrawer();
+    })();
+    window.addEventListener('DOMContentLoaded', () => {
+      renderCurrentRoute();
+    });
+  </script>
+</body>
+</html>
