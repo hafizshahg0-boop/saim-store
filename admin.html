@@ -3,85 +3,171 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Saim Store - Secure Admin</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Saim Store — Secure Admin Login</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- 1. Load Supabase JS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .font-display { font-family: 'Poppins', sans-serif; }
+  </style>
 </head>
-<body class="bg-gray-100 p-8 flex items-center justify-center min-h-screen">
-  <div id="app" class="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl text-center">
-    <div class="w-16 h-16 rounded-2xl bg-brand-orange text-white flex items-center justify-center font-bold text-2xl mx-auto mb-4" style="background-color: #FF5A1F;">SS</div>
-    <h1 class="text-2xl font-bold mb-2 text-gray-900">Saim Store Admin</h1>
-    <p class="mb-6 text-sm text-gray-500">Secure production environment.</p>
-    
-    <div id="auth-container">
-        <form id="admin-login-form" onsubmit="handleLogin(event)" class="text-left space-y-4">
-            <div id="error-msg" class="hidden p-3 bg-red-50 text-red-600 border border-red-200 rounded-lg text-sm font-semibold"></div>
-            
-            <div>
-                <label class="block text-xs font-bold text-gray-700 mb-1">Administrator Email</label>
-                <input type="email" id="email" value="hafizshahg0@gmail.com" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:border-orange-500 outline-none transition" readonly />
-            </div>
-            
-            <div>
-                <label class="block text-xs font-bold text-gray-700 mb-1">Secure Password</label>
-                <input type="password" id="password" required placeholder="Enter production password" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:border-orange-500 outline-none transition" />
-            </div>
-            
-            <button type="submit" id="login-btn" class="w-full py-3 rounded-xl text-white font-bold transition shadow-lg mt-2" style="background-color: #FF5A1F;">
-                Authenticate
-            </button>
-        </form>
-    </div>
-  </div>
-  
-  <script>
-    // 2. Initialize Supabase (Replace with your actual keys)
-    const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
-    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_PUBLISHABLE_ANON_KEY';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+<body class="min-h-screen bg-gradient-to-br from-[#111111] via-gray-900 to-[#111111] flex items-center justify-center p-4">
 
-    // 3. Check if already logged in
-    window.addEventListener('DOMContentLoaded', async () => {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session && session.user.email === 'hafizshahg0@gmail.com') {
-            window.location.href = 'index.html#/admin';
-        }
+  <div class="w-full max-w-md">
+    <div class="bg-white rounded-3xl shadow-2xl p-8 sm:p-10">
+      <div class="text-center mb-8">
+        <div class="w-16 h-16 rounded-2xl bg-[#FF5A1F] text-white flex items-center justify-center font-display font-extrabold text-2xl mx-auto mb-4 shadow-lg">SS</div>
+        <h1 class="font-display font-extrabold text-2xl text-gray-900">Saim Store Admin</h1>
+        <p class="text-sm text-gray-500 mt-1">Authorized personnel only</p>
+      </div>
+
+      <div id="config-warning" class="hidden mb-4 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold">
+        Supabase is not configured yet. Paste your Project URL and anon key into admin.html and index.html.
+      </div>
+
+      <form id="admin-login-form" class="space-y-4" novalidate>
+        <div id="error-msg" class="hidden p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm font-semibold"></div>
+        <div id="ok-msg" class="hidden p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-semibold"></div>
+
+        <div>
+          <label for="email" class="block text-xs font-bold text-gray-700 mb-1.5">Administrator Email</label>
+          <input type="email" id="email" autocomplete="username" required value="hafizshahg0@gmail.com"
+            class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#FF5A1F] focus:ring-2 focus:ring-orange-100 outline-none transition text-sm" />
+        </div>
+
+        <div>
+          <label for="password" class="block text-xs font-bold text-gray-700 mb-1.5">Password</label>
+          <div class="relative">
+            <input type="password" id="password" autocomplete="current-password" required placeholder="Enter your password"
+              class="w-full px-4 py-3 pr-16 rounded-xl border border-gray-300 focus:border-[#FF5A1F] focus:ring-2 focus:ring-orange-100 outline-none transition text-sm" />
+            <button type="button" id="toggle-pw" class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-500 hover:text-[#FF5A1F]">Show</button>
+          </div>
+        </div>
+
+        <button type="submit" id="login-btn"
+          class="w-full py-3.5 rounded-xl bg-[#FF5A1F] hover:bg-[#E04812] text-white font-display font-bold text-sm transition shadow-lg shadow-orange-500/25 disabled:opacity-60 disabled:cursor-not-allowed">
+          Sign In Securely
+        </button>
+
+        <button type="button" id="forgot-btn" class="w-full text-xs font-semibold text-gray-500 hover:text-[#FF5A1F]">Forgot password?</button>
+      </form>
+    </div>
+
+    <p class="text-center mt-6">
+      <a href="index.html" class="text-xs font-semibold text-gray-400 hover:text-white">← Back to Saim Store</a>
+    </p>
+  </div>
+
+  <script>
+    /* >>> PASTE YOUR KEYS HERE (same values as index.html) <<< */
+    const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
+    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_PUBLIC_KEY';
+    const ADMIN_EMAILS = ['hafizshahg0@gmail.com'];
+
+    const form = document.getElementById('admin-login-form');
+    const btn = document.getElementById('login-btn');
+    const errEl = document.getElementById('error-msg');
+    const okEl = document.getElementById('ok-msg');
+
+    let sbClient = null;
+    const configured = !SUPABASE_URL.includes('YOUR_PROJECT_ID') && !SUPABASE_ANON_KEY.startsWith('YOUR_');
+    if (configured && window.supabase) {
+      sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: { persistSession: true, autoRefreshToken: true }
+      });
+    } else {
+      document.getElementById('config-warning').classList.remove('hidden');
+      btn.disabled = true;
+    }
+
+    const isAdmin = (user) => !!user?.email && ADMIN_EMAILS.includes(user.email.toLowerCase());
+    const goToDashboard = () => window.location.replace('index.html#/admin');
+
+    function showError(msg) {
+      okEl.classList.add('hidden');
+      errEl.textContent = msg;
+      errEl.classList.remove('hidden');
+    }
+    function setLoading(on) {
+      btn.disabled = on;
+      btn.textContent = on ? 'Verifying...' : 'Sign In Securely';
+    }
+
+    // Password reset link: let the admin set a new password
+    let recovering = false;
+    if (sbClient) {
+      sbClient.auth.onAuthStateChange(async (event) => {
+        if (event !== 'PASSWORD_RECOVERY') return;
+        recovering = true;
+        const newPw = prompt('Enter a new password (min 8 characters):');
+        if (!newPw || newPw.length < 8) return showError('Password not changed (min 8 characters).');
+        const { error } = await sbClient.auth.updateUser({ password: newPw });
+        if (error) return showError(error.message);
+        goToDashboard();
+      });
+    }
+
+    // Already signed in? Skip the form.
+    (async () => {
+      if (!sbClient || location.hash.includes('type=recovery')) return;
+      const { data } = await sbClient.auth.getSession();
+      if (isAdmin(data?.session?.user)) goToDashboard();
+    })();
+
+    document.getElementById('toggle-pw').addEventListener('click', (e) => {
+      const pw = document.getElementById('password');
+      const show = pw.type === 'password';
+      pw.type = show ? 'text' : 'password';
+      e.target.textContent = show ? 'Hide' : 'Show';
     });
 
-    // 4. Handle secure login
-    async function handleLogin(e) {
-        e.preventDefault();
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const btn = document.getElementById('login-btn');
-        const err = document.getElementById('error-msg');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!sbClient) return;
+      const email = document.getElementById('email').value.trim().toLowerCase();
+      const password = document.getElementById('password').value;
+      errEl.classList.add('hidden');
 
-        btn.textContent = 'Verifying...';
-        btn.classList.add('opacity-70', 'cursor-not-allowed');
-        err.classList.add('hidden');
+      if (!email || !password) return showError('Please enter your email and password.');
+      if (!ADMIN_EMAILS.includes(email)) return showError('Access denied: this email is not an administrator.');
 
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-
+      setLoading(true);
+      try {
+        const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
         if (error) {
-            err.textContent = error.message;
-            err.classList.remove('hidden');
-            btn.textContent = 'Authenticate';
-            btn.classList.remove('opacity-70', 'cursor-not-allowed');
-            return;
+          const msg = /invalid login/i.test(error.message) ? 'Incorrect email or password.'
+                    : /not confirmed/i.test(error.message) ? 'Email not confirmed. Confirm the user in Supabase > Authentication > Users.'
+                    : error.message;
+          return showError(msg);
         }
+        if (!isAdmin(data.user)) {
+          await sbClient.auth.signOut();
+          return showError('Access denied: missing administrator privileges.');
+        }
+        okEl.textContent = 'Authenticated. Opening dashboard...';
+        okEl.classList.remove('hidden');
+        goToDashboard();
+      } catch (err) {
+        showError('Network error. Check your connection and try again.');
+      } finally {
+        setLoading(false);
+      }
+    });
 
-        // 5. Verify Authorization Role
-        if (data.user && data.user.email === 'hafizshahg0@gmail.com') {
-            window.location.href = 'index.html#/admin';
-        } else {
-            await supabase.auth.signOut();
-            err.textContent = 'Access Denied: Missing Administrator Privileges.';
-            err.classList.remove('hidden');
-            btn.textContent = 'Authenticate';
-            btn.classList.remove('opacity-70', 'cursor-not-allowed');
-        }
-    }
+    document.getElementById('forgot-btn').addEventListener('click', async () => {
+      if (!sbClient) return;
+      const email = document.getElementById('email').value.trim().toLowerCase();
+      if (!ADMIN_EMAILS.includes(email)) return showError('Enter the administrator email first.');
+      const { error } = await sbClient.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + '/admin.html'
+      });
+      if (error) return showError(error.message);
+      errEl.classList.add('hidden');
+      okEl.textContent = 'Password reset link sent to ' + email;
+      okEl.classList.remove('hidden');
+    });
   </script>
 </body>
 </html>
