@@ -7,6 +7,7 @@
   <meta name="description" content="Shop the latest fashion, electronics, beauty essentials, home accessories and more at Saim Store (SS). Direct WhatsApp Ordering & Cash on Delivery across Pakistan." />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
@@ -473,6 +474,45 @@
 
   <!-- COMPLETE APPLICATION LOGIC, 144 SEEDED PRODUCTS, SLIDER ENGINE & WHATSAPP CHECKOUT -->
   <script>
+    /********************************************************************
+     * 0. SUPABASE AUTH CONFIGURATION  >>> PASTE YOUR KEYS HERE <<<
+     *    Supabase Dashboard > Project Settings > API
+     ********************************************************************/
+    const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
+    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_PUBLIC_KEY';
+    const ADMIN_EMAILS = ['hafizshahg0@gmail.com'];
+
+    let sbClient = null;
+    try {
+      if (window.supabase && !SUPABASE_URL.includes('YOUR_PROJECT_ID')) {
+        sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+          auth: { persistSession: true, autoRefreshToken: true }
+        });
+      }
+    } catch (err) { console.error('Supabase init failed:', err); }
+
+    let adminSession = null;
+
+    function isAdminSession(session) {
+      const email = session?.user?.email?.toLowerCase();
+      return !!email && ADMIN_EMAILS.includes(email);
+    }
+
+    async function getAdminSession() {
+      if (!sbClient) return null;
+      try {
+        const { data } = await sbClient.auth.getSession();
+        return isAdminSession(data?.session) ? data.session : null;
+      } catch (err) { return null; }
+    }
+
+    async function handleAdminLogout() {
+      try { if (sbClient) await sbClient.auth.signOut(); } catch (err) {}
+      adminSession = null;
+      showToast('Logged out successfully.');
+      navigate('home');
+    }
+
     /********************************************************************
      * 1. CENTRALIZED WHATSAPP CONFIGURATION & HELPER FUNCTIONS
      ********************************************************************/
@@ -1003,7 +1043,7 @@
       recentlyViewed: ['prod-1', 'prod-3', 'prod-16', 'prod-49'],
       user: {
         isLoggedIn: true,
-        role: 'admin',
+        role: 'customer',
         name: 'Saim Customer',
         email: 'customer@saimstore.pk',
         phone: '03001234567',
@@ -3230,10 +3270,13 @@
               <div class="w-12 h-12 rounded-2xl bg-brand-orange flex items-center justify-center font-display font-extrabold text-xl">SS</div>
               <div>
                 <h1 class="font-display font-extrabold text-xl sm:text-2xl">Saim Store Admin Dashboard</h1>
-                <p class="text-xs text-gray-400">Dynamic Catalog, 12 Department Sliders, WhatsApp Number (${getStoreWhatsAppLocal()}) & Order Requests</p>
+                <p class="text-xs text-gray-400">Signed in as <strong class="text-brand-orange">${adminSession?.user?.email || ''}</strong> • WhatsApp ${getStoreWhatsAppLocal()}</p>
               </div>
             </div>
             <div class="flex flex-wrap gap-2">
+              <button onclick="handleAdminLogout()" class="px-4 py-2 rounded-xl text-xs font-bold bg-red-600 hover:bg-red-700 text-white transition flex items-center gap-1.5">
+                <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Logout
+              </button>
               ${[
                 { id: 'overview', label: 'Orders & Overview' },
                 { id: 'products', label: 'Add / Manage Products' },
@@ -3406,6 +3449,7 @@
 
     function handleAdminAddProduct(e) {
       e.preventDefault();
+      if (!adminSession) { window.location.href = 'admin.html'; return; }
       const fd = new FormData(e.target);
       const dept = DEPARTMENTS.find(d => d.slug === fd.get('departmentSlug')) || DEPARTMENTS[0];
       const subName = fd.get('subcategoryName') || dept.subcategories[0];
@@ -3451,6 +3495,7 @@
     }
 
     function updateAdminOrderStatus(orderId, status) {
+      if (!adminSession) { window.location.href = 'admin.html'; return; }
       const ord = state.orders.find(o => o.id === orderId);
       if (ord) {
         ord.status = status;
@@ -3462,6 +3507,7 @@
 
     function handleSaveAdminSettings(e) {
       e.preventDefault();
+      if (!adminSession) { window.location.href = 'admin.html'; return; }
       const fd = new FormData(e.target);
       state.settings.whatsappLocal = String(fd.get('whatsappLocal') || '03396497058').trim();
       state.settings.whatsappInternational = sanitizeWhatsAppNumber(fd.get('whatsappInternational') || '923396497058');
@@ -3590,7 +3636,21 @@
             view.innerHTML = renderAccountPage();
             break;
           case 'admin':
-            view.innerHTML = renderAdminDashboard(params.tab || 'overview');
+            if (adminSession) {
+              view.innerHTML = renderAdminDashboard(params.tab || 'overview');
+              break;
+            }
+            view.innerHTML = `<div class="py-24 text-center"><div class="w-10 h-10 border-4 border-brand-orange border-t-transparent rounded-full animate-spin mx-auto mb-4"></div><p class="font-bold text-brand-grayMuted">Verifying secure admin access...</p></div>`;
+            getAdminSession().then(session => {
+              if (currentRoute.page !== 'admin') return;
+              if (session) {
+                adminSession = session;
+                view.innerHTML = renderAdminDashboard(currentRoute.params.tab || 'overview');
+                safeRefreshIcons();
+              } else {
+                window.location.href = 'admin.html';
+              }
+            });
             break;
           default:
             view.innerHTML = renderStaticInfoPage(page);
@@ -3605,13 +3665,29 @@
     }
 
     // Immediate self-healing mount (executes right away + on DOMContentLoaded)
+    function routeFromHash() {
+      const hash = (window.location.hash || '').replace(/^#\/?/, '');
+      if (hash.startsWith('admin')) {
+        const tab = hash.split('/')[1];
+        currentRoute = { page: 'admin', params: tab ? { tab } : {} };
+      }
+    }
+
+    if (sbClient) {
+      sbClient.auth.onAuthStateChange((_event, session) => {
+        adminSession = isAdminSession(session) ? session : null;
+        if (!adminSession && currentRoute.page === 'admin') window.location.href = 'admin.html';
+      });
+    }
+
     (function bootstrapSaimStore() {
+      routeFromHash();
       renderCurrentRoute();
       renderCartDrawer();
+      if (window.location.hash.startsWith('#/admin')) {
+        history.replaceState(null, '', window.location.pathname);
+      }
     })();
-    window.addEventListener('DOMContentLoaded', () => {
-      renderCurrentRoute();
-    });
   </script>
 </body>
 </html>
