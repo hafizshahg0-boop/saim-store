@@ -2,41 +2,86 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Saim Store - Secure Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- 1. Load Supabase JS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-gray-100 p-8">
-  <div id="app" class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-lg text-center">
-    <h1 class="text-3xl font-bold mb-4 text-orange-600">Saim Store - Secure Admin System</h1>
-    <p class="mb-4">The secure admin login system has been initialized. To comply with security requirements, plaintext passwords are not stored.</p>
+<body class="bg-gray-100 p-8 flex items-center justify-center min-h-screen">
+  <div id="app" class="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl text-center">
+    <div class="w-16 h-16 rounded-2xl bg-brand-orange text-white flex items-center justify-center font-bold text-2xl mx-auto mb-4" style="background-color: #FF5A1F;">SS</div>
+    <h1 class="text-2xl font-bold mb-2 text-gray-900">Saim Store Admin</h1>
+    <p class="mb-6 text-sm text-gray-500">Secure production environment.</p>
     
-    <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 text-left space-y-4">
-        <h2 class="text-xl font-bold">Admin Configuration Status:</h2>
-        <ul class="list-disc pl-5">
-            <li><strong>Super Admin Email:</strong> hafizshahg0@gmail.com</li>
-            <li><strong>Authentication:</strong> Configured for Supabase Auth (or secure PBKDF2 local vault fallback)</li>
-            <li><strong>Route Protection:</strong> /admin paths are locked down.</li>
-        </ul>
-        <button onclick="window.location.hash='#/admin/login'" class="mt-4 px-6 py-2 bg-orange-600 text-white font-bold rounded hover:bg-orange-700">Go to Admin Login</button>
+    <div id="auth-container">
+        <form id="admin-login-form" onsubmit="handleLogin(event)" class="text-left space-y-4">
+            <div id="error-msg" class="hidden p-3 bg-red-50 text-red-600 border border-red-200 rounded-lg text-sm font-semibold"></div>
+            
+            <div>
+                <label class="block text-xs font-bold text-gray-700 mb-1">Administrator Email</label>
+                <input type="email" id="email" value="hafizshahg0@gmail.com" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:border-orange-500 outline-none transition" readonly />
+            </div>
+            
+            <div>
+                <label class="block text-xs font-bold text-gray-700 mb-1">Secure Password</label>
+                <input type="password" id="password" required placeholder="Enter production password" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:border-orange-500 outline-none transition" />
+            </div>
+            
+            <button type="submit" id="login-btn" class="w-full py-3 rounded-xl text-white font-bold transition shadow-lg mt-2" style="background-color: #FF5A1F;">
+                Authenticate
+            </button>
+        </form>
     </div>
   </div>
   
   <script>
-    // Simple router simulation for the requested URLs
-    function handleRoute() {
-        const hash = window.location.hash;
-        if (hash.startsWith('#/admin')) {
-            document.getElementById('app').innerHTML = `
-                <h2 class="text-2xl font-bold mb-4">Admin Login</h2>
-                <input type="email" value="hafizshahg0@gmail.com" class="border p-2 w-full mb-2" readonly />
-                <input type="password" placeholder="Password (Use 12345 for local test)" class="border p-2 w-full mb-2" id="pwd" />
-                <button onclick="alert('In a production environment, this connects directly to Supabase Auth. Local test passed.')" class="w-full bg-orange-600 text-white font-bold py-2 rounded">Secure Login</button>
-            `;
+    // 2. Initialize Supabase (Replace with your actual keys)
+    const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
+    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_PUBLISHABLE_ANON_KEY';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // 3. Check if already logged in
+    window.addEventListener('DOMContentLoaded', async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session && session.user.email === 'hafizshahg0@gmail.com') {
+            window.location.href = 'index.html#/admin';
+        }
+    });
+
+    // 4. Handle secure login
+    async function handleLogin(e) {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const btn = document.getElementById('login-btn');
+        const err = document.getElementById('error-msg');
+
+        btn.textContent = 'Verifying...';
+        btn.classList.add('opacity-70', 'cursor-not-allowed');
+        err.classList.add('hidden');
+
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+        if (error) {
+            err.textContent = error.message;
+            err.classList.remove('hidden');
+            btn.textContent = 'Authenticate';
+            btn.classList.remove('opacity-70', 'cursor-not-allowed');
+            return;
+        }
+
+        // 5. Verify Authorization Role
+        if (data.user && data.user.email === 'hafizshahg0@gmail.com') {
+            window.location.href = 'index.html#/admin';
+        } else {
+            await supabase.auth.signOut();
+            err.textContent = 'Access Denied: Missing Administrator Privileges.';
+            err.classList.remove('hidden');
+            btn.textContent = 'Authenticate';
+            btn.classList.remove('opacity-70', 'cursor-not-allowed');
         }
     }
-    window.addEventListener('hashchange', handleRoute);
-    handleRoute();
   </script>
 </body>
 </html>
